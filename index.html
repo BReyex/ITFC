@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT F.C // Torneo Roberto Poma 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════
+   CONFIG — VARIABLES
+════════════════════════════════════════ */
+:root {
+  --bg:       #030808;
+  --bg2:      #060e0e;
+  --surface:  #091414;
+  --surface2: #0c1a1a;
+  --border:   #0d2a2a;
+  --border2:  #0f3535;
+  --primary:  #00ff9d;
+  --primary2: #00cc7a;
+  --it:       #00e5ff;
+  --it-dim:   #007a8a;
+  --gold:     #ffd600;
+  --red:      #ff3860;
+  --dim:      #1a4040;
+  --text:     #b2fff0;
+  --muted:    #3a7070;
+  --mono: 'JetBrains Mono', monospace;
+  --display: 'Orbitron', monospace;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 13px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* Scanlines */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.15) 2px,
+    rgba(0,0,0,0.15) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Grid background */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,255,157,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,157,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ════════ SETUP OVERLAY ════════ */
+#setup-overlay {
+  position: fixed; inset: 0;
+  background: rgba(3,8,8,0.97);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.setup-box {
+  border: 1px solid var(--primary);
+  border-radius: 4px;
+  padding: 40px;
+  max-width: 620px;
+  width: 100%;
+  box-shadow: 0 0 60px rgba(0,255,157,0.1), inset 0 0 60px rgba(0,255,157,0.02);
+}
+.setup-title {
+  font-family: var(--display);
+  font-size: 20px;
+  color: var(--primary);
+  letter-spacing: 3px;
+  margin-bottom: 6px;
+}
+.setup-sub { color: var(--muted); font-size: 12px; margin-bottom: 28px; }
+.setup-step {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+}
+.setup-step-num {
+  font-family: var(--display);
+  font-size: 10px;
+  color: var(--primary);
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+.setup-step p { color: var(--text); line-height: 1.7; font-size: 12px; }
+.setup-step a { color: var(--it); text-decoration: none; }
+.setup-step a:hover { text-decoration: underline; }
+.setup-step code {
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  padding: 2px 6px;
+  border-radius: 3px;
+  color: var(--primary);
+  font-size: 11px;
+}
+.setup-input-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.setup-input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--primary);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 10px 14px;
+  border-radius: 4px;
+  outline: none;
+  min-width: 200px;
+}
+.setup-input:focus { border-color: var(--primary); box-shadow: 0 0 12px rgba(0,255,157,0.15); }
+.setup-input::placeholder { color: var(--muted); }
+.btn-primary {
+  background: var(--primary);
+  color: #000;
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: all .15s;
+}
+.btn-primary:hover { background: #00ffb3; box-shadow: 0 0 20px rgba(0,255,157,0.4); }
+.setup-err { color: var(--red); font-size: 11px; margin-top: 8px; display:none; }
+
+/* ════════ HEADER ════════ */
+header {
+  position: relative;
+  z-index: 1;
+  padding: 28px 28px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-left {}
+.sys-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.sys-label::before { content: '> '; color: var(--primary); }
+
+.main-title {
+  font-family: var(--display);
+  font-size: clamp(22px, 4vw, 44px);
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: var(--primary);
+  line-height: 1;
+  text-shadow: 0 0 30px rgba(0,255,157,0.4);
+  position: relative;
+}
+.main-title .it-accent { color: var(--it); text-shadow: 0 0 30px rgba(0,229,255,0.5); }
+.main-title-sub {
+  font-family: var(--display);
+  font-size: clamp(10px, 1.5vw, 14px);
+  letter-spacing: 6px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+.sync-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+.sync-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  transition: all .3s;
+}
+.sync-dot.live { background: var(--primary); box-shadow: 0 0 10px var(--primary); animation: pulse 2s infinite; }
+.sync-dot.error { background: var(--red); box-shadow: 0 0 10px var(--red); }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+.admin-toggle {
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  padding: 5px 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.admin-toggle:hover { border-color: var(--primary2); color: var(--primary); }
+.admin-toggle.active { border-color: var(--it); color: var(--it); background: rgba(0,229,255,0.06); }
+
+/* ════════ LAYOUT ════════ */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  min-height: calc(100vh - 100px);
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 960px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { border-left: none; border-top: 1px solid var(--border); }
+}
+
+.main-col { padding: 24px 24px 60px; border-right: 1px solid var(--border); }
+.sidebar { padding: 24px; background: var(--bg2); }
+
+/* ════════ SECTION HEADERS ════════ */
+.sec-title {
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sec-title::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 14px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+.sec-title span { color: var(--primary); }
+
+/* ════════ IT FC COMMAND CENTER ════════ */
+.it-command {
+  background: var(--surface);
+  border: 1px solid var(--it-dim);
+  border-radius: 4px;
+  padding: 22px 24px;
+  margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.it-command::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,229,255,0.04), transparent 60%);
+  pointer-events: none;
+}
+.it-command::after {
+  content: 'IT_FC';
+  position: absolute;
+  right: -12px; bottom: -20px;
+  font-family: var(--display);
+  font-size: 120px;
+  font-weight: 900;
+  color: rgba(0,229,255,0.04);
+  line-height: 1;
+  pointer-events: none;
+  letter-spacing: -4px;
+}
+
+.it-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.it-name {
+  font-family: var(--display);
+  font-size: clamp(24px, 4vw, 38px);
+  font-weight: 900;
+  color: var(--it);
+  letter-spacing: 4px;
+  text-shadow: 0 0 30px rgba(0,229,255,0.5);
+}
+.it-tag {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--it-dim);
+  border: 1px solid var(--it-dim);
+  padding: 3px 10px;
+  border-radius: 2px;
+}
+
+.it-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+@media (max-width: 600px) { .it-stats-grid { grid-template-columns: repeat(4, 1fr); } }
+.it-stat {
+  background: rgba(0,229,255,0.04);
+  border: 1px solid rgba(0,229,255,0.12);
+  border-radius: 3px;
+  padding: 10px 6px;
+  text-align: center;
+}
+.it-stat-val {
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--it);
+  line-height: 1;
+}
+.it-stat-val.pts { color: var(--gold); text-shadow: 0 0 20px rgba(255,214,0,0.4); }
+.it-stat-lbl { font-size: 9px; letter-spacing: 2px; color: var(--muted); margin-top: 4px; }
+
+.it-next-game {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border2);
+  border-left: 3px solid var(--it);
+  border-radius: 3px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.it-next-lbl { font-size: 9px; letter-spacing: 2px; color: var(--muted); margin-bottom: 4px; }
+.it-next-match { font-family: var(--display); font-size: 13px; color: var(--it); letter-spacing: 1px; }
+.it-next-date { font-size: 11px; color: var(--muted); }
+.it-form {
+  display: flex;
+  gap: 5px;
+}
+.form-dot {
+  width: 22px; height: 22px;
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display);
+  font-size: 10px;
+  font-weight: 700;
+}
+.form-dot.W { background: rgba(0,255,157,0.15); color: var(--primary); border: 1px solid var(--primary2); }
+.form-dot.D { background: rgba(100,150,255,0.15); color: #64b5f6; border: 1px solid #64b5f6; }
+.form-dot.L { background: rgba(255,56,96,0.15); color: var(--red); border: 1px solid var(--red); }
+.form-dot.P { background: var(--surface2); color: var(--muted); border: 1px solid var(--border2); }
+
+/* ════════ FECHA BLOCKS ════════ */
+.fecha-block { margin-bottom: 20px; }
+.fecha-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 10px;
+}
+.fecha-header:hover .fecha-num { color: var(--primary); }
+.fecha-num {
+  font-family: var(--display);
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--muted);
+  min-width: 80px;
+  transition: color .2s;
+}
+.fecha-meta { font-size: 10px; color: var(--dim); letter-spacing: 1px; }
+.fecha-badge {
+  background: rgba(0,229,255,0.08);
+  border: 1px solid rgba(0,229,255,0.2);
+  color: var(--it);
+  font-size: 9px;
+  letter-spacing: 2px;
+  padding: 2px 8px;
+  border-radius: 2px;
+  margin-left: auto;
+}
+.fecha-chevron { color: var(--muted); font-size: 10px; transition: transform .2s; }
+.fecha-block.collapsed .fecha-chevron { transform: rotate(-90deg); }
+.fecha-block.collapsed .fecha-matches { display: none; }
+
+.fecha-matches { display: flex; flex-direction: column; gap: 5px; }
+
+/* ════════ MATCH CARD ════════ */
+.match-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 9px 14px;
+  transition: border-color .15s;
+  gap: 8px;
+}
+.match-card:hover { border-color: var(--border2); }
+.match-card.it-game {
+  border-color: rgba(0,229,255,0.25);
+  background: linear-gradient(90deg, rgba(0,229,255,0.03), var(--surface), rgba(0,229,255,0.03));
+}
+.match-card.it-game:hover { border-color: rgba(0,229,255,0.5); }
+.match-card.has-result { opacity: 0.75; }
+.match-card.has-result:hover { opacity: 1; }
+
+.t-name {
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.t-name.it { color: var(--it); }
+.t-side-right .t-name { text-align: right; }
+.t-date { font-size: 9px; color: var(--muted); margin-top: 3px; letter-spacing: 0.5px; }
+.t-side-right .t-date { text-align: right; }
+
+.score-center {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px;
+}
+.s-box {
+  width: 34px; height: 34px;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  position: relative;
+  transition: border-color .15s;
+}
+.s-box input {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  background: transparent;
+  border: none; outline: none;
+  text-align: center;
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  cursor: default;
+  -moz-appearance: textfield;
+}
+.s-box input::-webkit-outer-spin-button,
+.s-box input::-webkit-inner-spin-button { -webkit-appearance: none; }
+.s-box input[readonly] { cursor: default; }
+.s-box input:not([readonly]) { cursor: text; color: var(--primary); }
+.s-box:has(input:not([readonly])) {
+  border-color: var(--primary2);
+  box-shadow: 0 0 8px rgba(0,255,157,0.15);
+}
+.s-sep { color: var(--dim); font-size: 10px; }
+
+/* Result color on score */
+.s-box.win { border-color: rgba(0,255,157,0.4); color: var(--primary); }
+.s-box.win input { color: var(--primary); }
+.s-box.lose { border-color: rgba(255,56,96,0.3); }
+.s-box.draw { border-color: rgba(100,150,255,0.3); }
+
+/* ════════ STANDINGS ════════ */
+.standings-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.standings-table thead th {
+  background: var(--surface2);
+  font-family: var(--display);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  padding: 8px 6px;
+  text-align: center;
+  border-bottom: 1px solid var(--border2);
+}
+.standings-table thead th:first-child { width: 26px; }
+.standings-table thead th:nth-child(2) { text-align: left; padding-left: 12px; }
+.standings-table tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.03);
+  transition: background .1s;
+}
+.standings-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+.standings-table tbody tr.it-row {
+  background: rgba(0,229,255,0.05);
+  border-bottom: 1px solid rgba(0,229,255,0.08);
+}
+.standings-table tbody tr.it-row:hover { background: rgba(0,229,255,0.09); }
+.standings-table td {
+  padding: 8px 6px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+.standings-table td:nth-child(2) {
+  text-align: left;
+  padding-left: 12px;
+  font-family: var(--display);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pos-n {
+  font-family: var(--display);
+  font-size: 11px;
+  color: var(--muted);
+}
+.pos-n.q { color: var(--primary); }
+.pts-val {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary2);
+}
+.it-row .pts-val { color: var(--gold); text-shadow: 0 0 10px rgba(255,214,0,0.3); }
+.it-row td:nth-child(2) { color: var(--it); }
+.dif-pos { color: var(--primary2); }
+.dif-neg { color: var(--red); }
+.liguilla-sep td { background: rgba(0,255,157,0.03); border-top: 1px dashed rgba(0,255,157,0.15) !important; }
+.liguilla-sep td:nth-child(2) { color: var(--primary); font-size: 9px; letter-spacing: 2px; }
+
+/* ════════ IT MATCH HISTORY ════════ */
+.it-match-list { display: flex; flex-direction: column; gap: 6px; }
+.it-match-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--dim);
+  border-radius: 3px;
+  padding: 9px 12px;
+  transition: border-color .15s;
+}
+.it-match-item:hover { border-color: var(--border2); }
+.it-match-item.win { border-left-color: var(--primary); }
+.it-match-item.draw { border-left-color: #64b5f6; }
+.it-match-item.lose { border-left-color: var(--red); }
+.it-match-item.pending { border-left-color: var(--dim); }
+.imi-fecha { font-size: 9px; color: var(--muted); letter-spacing: 1px; margin-bottom: 3px; }
+.imi-teams { font-family: var(--display); font-size: 11px; letter-spacing: 0.5px; color: var(--text); }
+.imi-teams .it-t { color: var(--it); }
+.imi-result {
+  font-family: var(--display);
+  font-size: 10px;
+  margin-top: 3px;
+  letter-spacing: 1px;
+}
+.imi-result.win { color: var(--primary); }
+.imi-result.draw { color: #64b5f6; }
+.imi-result.lose { color: var(--red); }
+.imi-result.pending { color: var(--muted); }
+
+/* ════════ ADMIN PANEL ════════ */
+#admin-panel {
+  display: none;
+  position: fixed;
+  bottom: 20px; right: 20px;
+  background: var(--surface);
+  border: 1px solid var(--it-dim);
+  border-radius: 4px;
+  padding: 14px 18px;
+  z-index: 500;
+  width: 240px;
+  box-shadow: 0 0 30px rgba(0,229,255,0.1);
+}
+#admin-panel.show { display: block; animation: slideUp .2s; }
+@keyframes slideUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+.ap-title { font-family: var(--display); font-size: 10px; letter-spacing: 2px; color: var(--it); margin-bottom: 12px; }
+.ap-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  color: var(--primary);
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 3px;
+  outline: none;
+  margin-bottom: 8px;
+  letter-spacing: 4px;
+}
+.ap-input:focus { border-color: var(--it); }
+.ap-hint { font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+.btn-sm {
+  background: rgba(0,229,255,0.1);
+  border: 1px solid var(--it-dim);
+  color: var(--it);
+  font-family: var(--display);
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 7px 14px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all .15s;
+  width: 100%;
+}
+.btn-sm:hover { background: rgba(0,229,255,0.18); border-color: var(--it); }
+.ap-err { color: var(--red); font-size: 10px; margin-top: 6px; display: none; }
+.ap-mode-indicator {
+  position: fixed;
+  top: 16px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,229,255,0.08);
+  border: 1px solid var(--it-dim);
+  color: var(--it);
+  font-family: var(--display);
+  font-size: 10px;
+  letter-spacing: 3px;
+  padding: 5px 18px;
+  border-radius: 3px;
+  z-index: 500;
+  display: none;
+}
+.ap-mode-indicator.show { display: block; animation: pulse 2s infinite; }
+
+/* ════════ TOAST ════════ */
+.toast {
+  position: fixed;
+  bottom: 20px; left: 50%; transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 10px 24px;
+  border-radius: 3px;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity .3s;
+  white-space: nowrap;
+  box-shadow: 0 0 20px rgba(0,255,157,0.2);
+}
+.toast.show { opacity: 1; }
+.toast.err { border-color: var(--red); color: var(--red); box-shadow: 0 0 20px rgba(255,56,96,0.2); }
+
+/* ════════ FOOTER ════════ */
+footer {
+  position: relative; z-index: 1;
+  padding: 14px 28px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  background: var(--bg2);
+}
+footer span { font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+footer .it-foot { color: var(--it); }
+#last-sync { font-size: 10px; color: var(--muted); }
+
+/* ════════ SCROLLBAR ════════ */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary2); }
+
+/* ════════ BLINKING CURSOR ════════ */
+.cursor::after { content: '_'; animation: blink 1s step-end infinite; color: var(--primary); }
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
+
+/* ════════ GLITCH ════════ */
+.glitch {
+  position: relative;
+}
+.glitch::before, .glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+}
+.glitch::before {
+  color: var(--it);
+  animation: glitch1 4s infinite;
+  clip-path: polygon(0 25%,100% 25%,100% 30%,0 30%);
+}
+.glitch::after {
+  color: var(--red);
+  animation: glitch2 4s infinite;
+  clip-path: polygon(0 65%,100% 65%,100% 70%,0 70%);
+}
+@keyframes glitch1 {
+  0%,90%,100% { transform: none; opacity:0; }
+  91% { transform: translate(-2px,0); opacity:0.7; }
+  93% { transform: translate(2px,0); opacity:0.7; }
+  95% { transform: none; opacity:0; }
+}
+@keyframes glitch2 {
+  0%,92%,100% { transform: none; opacity:0; }
+  93% { transform: translate(2px,0); opacity:0.6; }
+  95% { transform: translate(-2px,0); opacity:0.6; }
+  97% { transform: none; opacity:0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════ SETUP OVERLAY ════ -->
+<div id="setup-overlay">
+  <div class="setup-box">
+    <div class="setup-title">// CONFIGURACIÓN INICIAL</div>
+    <div class="setup-sub">Conecta la base de datos para sincronizar resultados en tiempo real</div>
+
+    <div class="setup-step">
+      <div class="setup-step-num">PASO 01 — CREAR PROYECTO FIREBASE</div>
+      <p>Ve a <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> → <strong>Agregar proyecto</strong> → ponle un nombre (ej: <code>poma2026</code>) → desactiva Google Analytics → <strong>Crear proyecto</strong></p>
+    </div>
+    <div class="setup-step">
+      <div class="setup-step-num">PASO 02 — CREAR BASE DE DATOS</div>
+      <p>En el menú izquierdo → <strong>Build</strong> → <strong>Realtime Database</strong> → <strong>Create Database</strong> → Selecciona <em>United States</em> → <em>Start in test mode</em> → <strong>Enable</strong></p>
+    </div>
+    <div class="setup-step">
+      <div class="setup-step-num">PASO 03 — COPIAR URL</div>
+      <p>Verás una URL como: <code>https://poma2026-xxxxx-default-rtdb.firebaseio.com</code><br>Cópiala y pégala abajo:</p>
+    </div>
+
+    <div class="setup-input-row">
+      <input class="setup-input" id="db-url-input" type="url"
+        placeholder="https://tu-proyecto-default-rtdb.firebaseio.com">
+      <button class="btn-primary" onclick="activateDB()">ACTIVAR</button>
+    </div>
+    <div class="setup-err" id="setup-err">URL inválida. Debe terminar en .firebaseio.com</div>
+    <p style="font-size:10px;color:var(--muted);margin-top:14px;">
+      💡 El PIN de administrador por defecto es <code style="color:var(--primary)">1234</code> — cámbialo en el código (variable <code>ADMIN_PIN</code>)
+    </p>
+  </div>
+</div>
+
+<!-- ════ ADMIN MODE INDICATOR ════ -->
+<div class="ap-mode-indicator" id="admin-indicator">⚡ MODO ADMIN ACTIVO</div>
+
+<!-- ════ HEADER ════ -->
+<header>
+  <div class="header-left">
+    <div class="sys-label">TORNEO FUTBOL RÁPIDO // SISTEMA DE CONTROL</div>
+    <div class="main-title glitch" data-text="ROBERTO POMA 2026">
+      <span class="it-accent">IT F.C</span> // ROBERTO POMA 2026
+    </div>
+    <div class="main-title-sub cursor">TEMPORADA EN CURSO</div>
+  </div>
+  <div class="header-right">
+    <div class="sync-status">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-label">CONECTANDO...</span>
+    </div>
+    <button class="admin-toggle" id="admin-btn" onclick="toggleAdminPanel()">
+      [ADMIN MODE]
+    </button>
+  </div>
+</header>
+
+<!-- ════ ADMIN PANEL ════ -->
+<div id="admin-panel">
+  <div class="ap-title">// ACCESO ADMINISTRADOR</div>
+  <input class="ap-input" id="pin-input" type="password" maxlength="8" placeholder="PIN" onkeydown="if(event.key==='Enter') verifyPin()">
+  <div class="ap-hint">Ingresa el PIN para editar resultados</div>
+  <button class="btn-sm" onclick="verifyPin()">AUTENTICAR</button>
+  <div class="ap-err" id="pin-err">PIN incorrecto</div>
+</div>
+
+<!-- ════ TOAST ════ -->
+<div class="toast" id="toast"></div>
+
+<!-- ════ LAYOUT ════ -->
+<div class="layout">
+
+  <!-- MAIN COL -->
+  <div class="main-col">
+
+    <!-- IT FC Command Center -->
+    <div class="it-command">
+      <div class="it-header-row">
+        <div>
+          <div class="it-name">IT F.C</div>
+          <div class="it-tag">EQUIPO // DEPT. SISTEMAS</div>
+        </div>
+        <div class="it-form" id="it-form"></div>
+      </div>
+      <div class="it-stats-grid" id="it-stats-grid">
+        <div class="it-stat"><div class="it-stat-val" id="s-pj">0</div><div class="it-stat-lbl">PJ</div></div>
+        <div class="it-stat"><div class="it-stat-val" id="s-pg">0</div><div class="it-stat-lbl">PG</div></div>
+        <div class="it-stat"><div class="it-stat-val" id="s-pe">0</div><div class="it-stat-lbl">PE</div></div>
+        <div class="it-stat"><div class="it-stat-val" id="s-pp">0</div><div class="it-stat-lbl">PP</div></div>
+        <div class="it-stat"><div class="it-stat-val" id="s-gf">0</div><div class="it-stat-lbl">GF</div></div>
+        <div class="it-stat"><div class="it-stat-val" id="s-gc">0</div><div class="it-stat-lbl">GC</div></div>
+        <div class="it-stat"><div class="it-stat-val pts" id="s-pts">0</div><div class="it-stat-lbl">PTS</div></div>
+      </div>
+      <div class="it-next-game">
+        <div>
+          <div class="it-next-lbl">PRÓXIMO PARTIDO</div>
+          <div class="it-next-match" id="it-next-match">—</div>
+          <div class="it-next-date" id="it-next-date">—</div>
+        </div>
+        <div>
+          <div class="it-next-lbl">POSICIÓN ACTUAL</div>
+          <div style="font-family:var(--display);font-size:28px;color:var(--gold);text-shadow:0 0 20px rgba(255,214,0,0.4)" id="it-pos">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-title"><span>PROGRAMACIÓN</span> — 15 JORNADAS</div>
+    <div id="fechas-container"></div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sec-title"><span>TABLA</span> DE POSICIONES</div>
+    <div class="standings-wrap">
+      <table class="standings-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>EQUIPO</th>
+            <th>PJ</th>
+            <th>PG</th>
+            <th>PE</th>
+            <th>PP</th>
+            <th>GF</th>
+            <th>GC</th>
+            <th>DIF</th>
+            <th>PTS</th>
+          </tr>
+        </thead>
+        <tbody id="standings-body"></tbody>
+      </table>
+    </div>
+
+    <div class="sec-title"><span>IT F.C</span> — HISTORIAL</div>
+    <div class="it-match-list" id="it-match-list"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span><span class="it-foot">IT F.C</span> // TORNEO ROBERTO POMA 2026</span>
+  <span id="last-sync">SYNC: —</span>
+  <span>POWERED BY <span class="it-foot">FIREBASE RT DB</span></span>
+</footer>
+
+<script>
+/* ════════════════════════════════════════
+   ⚙️  CONFIG — EDITAR AQUÍ
+════════════════════════════════════════ */
+const ADMIN_PIN = '1234'; // Cambia este PIN
+
+/* ════════════════════════════════════════
+   DATOS DEL TORNEO
+════════════════════════════════════════ */
+const TEAMS = [
+  'HYBRID','TLH','TOYOTA F.C','IT F.C','C.D BMW','PROCERES F.C',
+  'PINTEN JR.','INTER F.C','AUTOFACIL F.C','FOTON F.C','PINTEN',
+  'TALLER EXPRESS F.C','KIA F.C','REVOLUTION F.C','SAN LUIS CPD','REPUESTOS F.C'
+];
+
+const FECHAS = [
+  { num:1, label:'09–12 MAR',
+    matches:[
+      {e1:'HYBRID',e2:'TLH',d:'Lun 9 Mar'},
+      {e1:'TOYOTA F.C',e2:'IT F.C',d:'Lun 9 Mar'},
+      {e1:'C.D BMW',e2:'PROCERES F.C',d:'Mar 10 Mar'},
+      {e1:'PINTEN JR.',e2:'INTER F.C',d:'Mar 10 Mar'},
+      {e1:'AUTOFACIL F.C',e2:'FOTON F.C',d:'Mié 11 Mar'},
+      {e1:'PINTEN',e2:'TALLER EXPRESS F.C',d:'Mié 11 Mar'},
+      {e1:'KIA F.C',e2:'REVOLUTION F.C',d:'Jue 12 Mar'},
+      {e1:'SAN LUIS CPD',e2:'REPUESTOS F.C',d:'Jue 12 Mar'},
+    ]},
+  { num:2, label:'16–19 MAR',
+    matches:[
+      {e1:'TLH',e2:'IT F.C',d:'Lun 16 Mar'},
+      {e1:'HYBRID',e2:'C.D BMW',d:'Lun 16 Mar'},
+      {e1:'INTER F.C',e2:'TOYOTA F.C',d:'Mar 17 Mar'},
+      {e1:'PROCERES F.C',e2:'AUTOFACIL F.C',d:'Mar 17 Mar'},
+      {e1:'TALLER EXPRESS F.C',e2:'PINTEN JR.',d:'Mié 18 Mar'},
+      {e1:'FOTON F.C',e2:'KIA F.C',d:'Mié 18 Mar'},
+      {e1:'REPUESTOS F.C',e2:'PINTEN',d:'Jue 19 Mar'},
+      {e1:'REVOLUTION F.C',e2:'SAN LUIS CPD',d:'Jue 19 Mar'},
+    ]},
+  { num:3, label:'23–26 MAR',
+    matches:[
+      {e1:'C.D BMW',e2:'TLH',d:'Lun 23 Mar'},
+      {e1:'IT F.C',e2:'INTER F.C',d:'Lun 23 Mar'},
+      {e1:'AUTOFACIL F.C',e2:'HYBRID',d:'Mar 24 Mar'},
+      {e1:'TOYOTA F.C',e2:'TALLER EXPRESS F.C',d:'Mar 24 Mar'},
+      {e1:'KIA F.C',e2:'PROCERES F.C',d:'Mié 25 Mar'},
+      {e1:'PINTEN JR.',e2:'REPUESTOS F.C',d:'Mié 25 Mar'},
+      {e1:'SAN LUIS CPD',e2:'FOTON F.C',d:'Jue 26 Mar'},
+      {e1:'PINTEN',e2:'REVOLUTION F.C',d:'Jue 26 Mar'},
+    ]},
+  { num:4, label:'06–09 ABR',
+    matches:[
+      {e1:'TLH',e2:'INTER F.C',d:'Lun 6 Abr'},
+      {e1:'C.D BMW',e2:'AUTOFACIL F.C',d:'Lun 6 Abr'},
+      {e1:'TALLER EXPRESS F.C',e2:'IT F.C',d:'Mar 7 Abr'},
+      {e1:'HYBRID',e2:'KIA F.C',d:'Mar 7 Abr'},
+      {e1:'REPUESTOS F.C',e2:'TOYOTA F.C',d:'Mié 8 Abr'},
+      {e1:'PROCERES F.C',e2:'SAN LUIS CPD',d:'Mié 8 Abr'},
+      {e1:'REVOLUTION F.C',e2:'PINTEN JR.',d:'Jue 9 Abr'},
+      {e1:'FOTON F.C',e2:'PINTEN',d:'Jue 9 Abr'},
+    ]},
+  { num:5, label:'13–16 ABR',
+    matches:[
+      {e1:'AUTOFACIL F.C',e2:'TLH',d:'Lun 13 Abr'},
+      {e1:'INTER F.C',e2:'TALLER EXPRESS F.C',d:'Lun 13 Abr'},
+      {e1:'KIA F.C',e2:'C.D BMW',d:'Mar 14 Abr'},
+      {e1:'IT F.C',e2:'REPUESTOS F.C',d:'Mar 14 Abr'},
+      {e1:'SAN LUIS CPD',e2:'HYBRID',d:'Mié 15 Abr'},
+      {e1:'TOYOTA F.C',e2:'REVOLUTION F.C',d:'Mié 15 Abr'},
+      {e1:'PINTEN',e2:'PROCERES F.C',d:'Jue 16 Abr'},
+      {e1:'PINTEN JR.',e2:'FOTON F.C',d:'Jue 16 Abr'},
+    ]},
+  { num:6, label:'20–23 ABR',
+    matches:[
+      {e1:'TLH',e2:'TALLER EXPRESS F.C',d:'Lun 20 Abr'},
+      {e1:'AUTOFACIL F.C',e2:'KIA F.C',d:'Lun 20 Abr'},
+      {e1:'REPUESTOS F.C',e2:'INTER F.C',d:'Mar 21 Abr'},
+      {e1:'C.D BMW',e2:'SAN LUIS CPD',d:'Mar 21 Abr'},
+      {e1:'REVOLUTION F.C',e2:'IT F.C',d:'Mié 22 Abr'},
+      {e1:'HYBRID',e2:'PINTEN',d:'Mié 22 Abr'},
+      {e1:'FOTON F.C',e2:'TOYOTA F.C',d:'Jue 23 Abr'},
+      {e1:'PROCERES F.C',e2:'PINTEN JR.',d:'Jue 23 Abr'},
+    ]},
+  { num:7, label:'27–30 ABR',
+    matches:[
+      {e1:'KIA F.C',e2:'TLH',d:'Lun 27 Abr'},
+      {e1:'TALLER EXPRESS F.C',e2:'REPUESTOS F.C',d:'Lun 27 Abr'},
+      {e1:'SAN LUIS CPD',e2:'AUTOFACIL F.C',d:'Mar 28 Abr'},
+      {e1:'INTER F.C',e2:'REVOLUTION F.C',d:'Mar 28 Abr'},
+      {e1:'PINTEN',e2:'C.D BMW',d:'Jue 29 May'},
+      {e1:'IT F.C',e2:'FOTON F.C',d:'Jue 29 May'},
+      {e1:'PINTEN JR.',e2:'HYBRID',d:'Vie 30 May'},
+      {e1:'TOYOTA F.C',e2:'PROCERES F.C',d:'Vie 30 May'},
+    ]},
+  { num:8, label:'04–07 MAY',
+    matches:[
+      {e1:'TLH',e2:'REPUESTOS F.C',d:'Lun 4 May'},
+      {e1:'KIA F.C',e2:'SAN LUIS CPD',d:'Lun 4 May'},
+      {e1:'REVOLUTION F.C',e2:'TALLER EXPRESS F.C',d:'Mar 5 May'},
+      {e1:'AUTOFACIL F.C',e2:'PINTEN',d:'Mar 5 May'},
+      {e1:'FOTON F.C',e2:'INTER F.C',d:'Mié 6 May'},
+      {e1:'C.D BMW',e2:'PINTEN JR.',d:'Mié 6 May'},
+      {e1:'PROCERES F.C',e2:'IT F.C',d:'Jue 7 May'},
+      {e1:'HYBRID',e2:'TOYOTA F.C',d:'Jue 7 May'},
+    ]},
+  { num:9, label:'11–14 MAY',
+    matches:[
+      {e1:'SAN LUIS CPD',e2:'TLH',d:'Lun 11 May'},
+      {e1:'REPUESTOS F.C',e2:'REVOLUTION F.C',d:'Lun 11 May'},
+      {e1:'PINTEN',e2:'KIA F.C',d:'Mar 12 May'},
+      {e1:'TALLER EXPRESS F.C',e2:'FOTON F.C',d:'Mar 12 May'},
+      {e1:'PINTEN JR.',e2:'AUTOFACIL F.C',d:'Mié 13 May'},
+      {e1:'INTER F.C',e2:'PROCERES F.C',d:'Mié 13 May'},
+      {e1:'TOYOTA F.C',e2:'C.D BMW',d:'Jue 14 May'},
+      {e1:'IT F.C',e2:'HYBRID',d:'Jue 14 May'},
+    ]},
+  { num:10, label:'18–21 MAY',
+    matches:[
+      {e1:'TLH',e2:'REVOLUTION F.C',d:'Lun 18 May'},
+      {e1:'SAN LUIS CPD',e2:'PINTEN',d:'Lun 18 May'},
+      {e1:'FOTON F.C',e2:'REPUESTOS F.C',d:'Mar 19 May'},
+      {e1:'KIA F.C',e2:'PINTEN JR.',d:'Mar 19 May'},
+      {e1:'PROCERES F.C',e2:'TALLER EXPRESS F.C',d:'Mié 20 May'},
+      {e1:'AUTOFACIL F.C',e2:'TOYOTA F.C',d:'Mié 20 May'},
+      {e1:'HYBRID',e2:'INTER F.C',d:'Jue 21 May'},
+      {e1:'C.D BMW',e2:'IT F.C',d:'Jue 21 May'},
+    ]},
+  { num:11, label:'25–28 MAY',
+    matches:[
+      {e1:'PINTEN',e2:'TLH',d:'Lun 25 May'},
+      {e1:'REVOLUTION F.C',e2:'FOTON F.C',d:'Lun 25 May'},
+      {e1:'PINTEN JR.',e2:'SAN LUIS CPD',d:'Mar 26 May'},
+      {e1:'REPUESTOS F.C',e2:'PROCERES F.C',d:'Mar 26 May'},
+      {e1:'TOYOTA F.C',e2:'KIA F.C',d:'Mié 27 May'},
+      {e1:'TALLER EXPRESS F.C',e2:'HYBRID',d:'Mié 27 May'},
+      {e1:'IT F.C',e2:'AUTOFACIL F.C',d:'Jue 28 May'},
+      {e1:'INTER F.C',e2:'C.D BMW',d:'Sáb 28 Jun'},
+    ]},
+  { num:12, label:'01–04 JUN',
+    matches:[
+      {e1:'TLH',e2:'FOTON F.C',d:'Lun 1 Jun'},
+      {e1:'PINTEN',e2:'PINTEN JR.',d:'Lun 1 Jun'},
+      {e1:'PROCERES F.C',e2:'REVOLUTION F.C',d:'Mar 2 Jun'},
+      {e1:'SAN LUIS CPD',e2:'TOYOTA F.C',d:'Mar 2 Jun'},
+      {e1:'HYBRID',e2:'REPUESTOS F.C',d:'Mié 3 Jun'},
+      {e1:'KIA F.C',e2:'IT F.C',d:'Mié 3 Jun'},
+      {e1:'C.D BMW',e2:'TALLER EXPRESS F.C',d:'Jue 4 Jun'},
+      {e1:'AUTOFACIL F.C',e2:'INTER F.C',d:'Jue 4 Jun'},
+    ]},
+  { num:13, label:'08–11 JUN',
+    matches:[
+      {e1:'PINTEN JR.',e2:'TLH',d:'Lun 8 Jun'},
+      {e1:'FOTON F.C',e2:'PROCERES F.C',d:'Lun 8 Jun'},
+      {e1:'TOYOTA F.C',e2:'PINTEN',d:'Mar 9 Jun'},
+      {e1:'REVOLUTION F.C',e2:'HYBRID',d:'Mar 9 Jun'},
+      {e1:'IT F.C',e2:'SAN LUIS CPD',d:'Mié 10 Jun'},
+      {e1:'REPUESTOS F.C',e2:'C.D BMW',d:'Mié 10 Jun'},
+      {e1:'INTER F.C',e2:'KIA F.C',d:'Jue 11 Jun'},
+      {e1:'TALLER EXPRESS F.C',e2:'AUTOFACIL F.C',d:'Jue 11 Jun'},
+    ]},
+  { num:14, label:'15–19 JUN',
+    matches:[
+      {e1:'TLH',e2:'PROCERES F.C',d:'Lun 15 Jun'},
+      {e1:'PINTEN JR.',e2:'TOYOTA F.C',d:'Lun 15 Jun'},
+      {e1:'HYBRID',e2:'FOTON F.C',d:'Mar 16 Jun'},
+      {e1:'PINTEN',e2:'IT F.C',d:'Mar 16 Jun'},
+      {e1:'C.D BMW',e2:'REVOLUTION F.C',d:'Mié 18 Jun'},
+      {e1:'SAN LUIS CPD',e2:'INTER F.C',d:'Mié 18 Jun'},
+      {e1:'AUTOFACIL F.C',e2:'REPUESTOS F.C',d:'Jue 19 Jun'},
+      {e1:'KIA F.C',e2:'TALLER EXPRESS F.C',d:'Jue 19 Jun'},
+    ]},
+  { num:15, label:'22–25 JUN',
+    matches:[
+      {e1:'TOYOTA F.C',e2:'TLH',d:'Lun 22 Jun'},
+      {e1:'PROCERES F.C',e2:'HYBRID',d:'Lun 22 Jun'},
+      {e1:'IT F.C',e2:'PINTEN JR.',d:'Mar 23 Jun'},
+      {e1:'FOTON F.C',e2:'C.D BMW',d:'Mar 23 Jun'},
+      {e1:'INTER F.C',e2:'PINTEN',d:'Mié 24 Jun'},
+      {e1:'REVOLUTION F.C',e2:'AUTOFACIL F.C',d:'Mié 24 Jun'},
+      {e1:'TALLER EXPRESS F.C',e2:'SAN LUIS CPD',d:'Jue 25 Jun'},
+      {e1:'REPUESTOS F.C',e2:'KIA F.C',d:'Jue 25 Jun'},
+    ]},
+];
+
+/* ════════════════════════════════════════
+   STATE
+════════════════════════════════════════ */
+let DB_URL = localStorage.getItem('poma_db_url') || '';
+let scores = {};
+let isAdmin = false;
+let syncInterval = null;
+
+/* ════════════════════════════════════════
+   SETUP
+════════════════════════════════════════ */
+function activateDB() {
+  const url = document.getElementById('db-url-input').value.trim().replace(/\/$/, '');
+  if (!url.includes('firebaseio.com')) {
+    document.getElementById('setup-err').style.display = 'block';
+    return;
+  }
+  DB_URL = url;
+  localStorage.setItem('poma_db_url', DB_URL);
+  document.getElementById('setup-overlay').style.display = 'none';
+  init();
+}
+
+function init() {
+  renderFechas();
+  renderStandings();
+  renderITMatchList();
+  updateITSpotlight();
+  startSync();
+}
+
+// Check if already configured
+if (DB_URL) {
+  document.getElementById('setup-overlay').style.display = 'none';
+  init();
+}
+
+/* ════════════════════════════════════════
+   FIREBASE REST
+════════════════════════════════════════ */
+async function fetchScores() {
+  try {
+    const res = await fetch(`${DB_URL}/scores.json`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    scores = data || {};
+    setSyncStatus('live', 'EN VIVO');
+    document.getElementById('last-sync').textContent =
+      'SYNC: ' + new Date().toLocaleTimeString('es-GT', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    refreshUI();
+  } catch(e) {
+    setSyncStatus('error', 'SIN CONEXIÓN');
+  }
+}
+
+async function pushScore(key, g1, g2) {
+  try {
+    const res = await fetch(`${DB_URL}/scores/${key}.json`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({g1: parseInt(g1), g2: parseInt(g2)})
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    scores[key] = {g1: parseInt(g1), g2: parseInt(g2)};
+    refreshUI();
+    showToast('✓ RESULTADO GUARDADO');
+  } catch(e) {
+    showToast('✗ ERROR AL GUARDAR', true);
+  }
+}
+
+function startSync() {
+  fetchScores();
+  syncInterval = setInterval(fetchScores, 10000);
+}
+
+function setSyncStatus(state, label) {
+  const dot = document.getElementById('sync-dot');
+  const lbl = document.getElementById('sync-label');
+  dot.className = 'sync-dot ' + (state === 'live' ? 'live' : 'error');
+  lbl.textContent = label;
+}
+
+/* ════════════════════════════════════════
+   RENDER
+════════════════════════════════════════ */
+function sk(f, m) { return `f${f}_m${m}`; }
+
+function getScore(f, m) {
+  const s = scores[sk(f, m)];
+  if (!s || s.g1 === undefined || s.g2 === undefined) return null;
+  return { g1: parseInt(s.g1), g2: parseInt(s.g2) };
+}
+
+function getStandings() {
+  const st = {};
+  TEAMS.forEach(t => { st[t] = {pj:0,pg:0,pe:0,pp:0,gf:0,gc:0,pts:0}; });
+  FECHAS.forEach(f => {
+    f.matches.forEach((m, mi) => {
+      const sc = getScore(f.num, mi);
+      if (sc === null || isNaN(sc.g1) || isNaN(sc.g2)) return;
+      const {e1, e2} = m;
+      st[e1].pj++; st[e2].pj++;
+      st[e1].gf += sc.g1; st[e1].gc += sc.g2;
+      st[e2].gf += sc.g2; st[e2].gc += sc.g1;
+      if (sc.g1 > sc.g2) { st[e1].pg++; st[e1].pts+=3; st[e2].pp++; }
+      else if (sc.g1 < sc.g2) { st[e2].pg++; st[e2].pts+=3; st[e1].pp++; }
+      else { st[e1].pe++; st[e1].pts++; st[e2].pe++; st[e2].pts++; }
+    });
+  });
+  return st;
+}
+
+function getSortedStandings() {
+  const st = getStandings();
+  return TEAMS.slice().sort((a,b) => {
+    const sa=st[a], sb=st[b];
+    if (sb.pts !== sa.pts) return sb.pts - sa.pts;
+    const da=sa.gf-sa.gc, db=sb.gf-sb.gc;
+    if (db !== da) return db - da;
+    return sb.gf - sa.gf;
+  }).map(t => ({team:t, ...st[t]}));
+}
+
+function renderStandings() {
+  const sorted = getSortedStandings();
+  const tbody = document.getElementById('standings-body');
+  tbody.innerHTML = '';
+  sorted.forEach((row, i) => {
+    const pos = i+1;
+    const isIT = row.team === 'IT F.C';
+    const dif = row.gf - row.gc;
+    const posClass = pos <= 8 ? 'q' : '';
+    tbody.innerHTML += `
+      <tr class="${isIT?'it-row':''}">
+        <td><span class="pos-n ${posClass}">${pos}</span></td>
+        <td>${row.team}</td>
+        <td>${row.pj}</td>
+        <td>${row.pg}</td>
+        <td>${row.pe}</td>
+        <td>${row.pp}</td>
+        <td>${row.gf}</td>
+        <td>${row.gc}</td>
+        <td class="${dif>0?'dif-pos':dif<0?'dif-neg':''}">${dif>0?'+':''}${dif}</td>
+        <td class="pts-val">${row.pts}</td>
+      </tr>`;
+    if (pos === 8) {
+      tbody.innerHTML += `<tr class="liguilla-sep"><td colspan="10" style="padding:4px 12px;font-size:9px;letter-spacing:2px">── LIGUILLA (TOP 8)</td></tr>`;
+    }
+  });
+}
+
+function updateITSpotlight() {
+  const st = getStandings();
+  const s = st['IT F.C'] || {pj:0,pg:0,pe:0,pp:0,gf:0,gc:0,pts:0};
+  document.getElementById('s-pj').textContent = s.pj;
+  document.getElementById('s-pg').textContent = s.pg;
+  document.getElementById('s-pe').textContent = s.pe;
+  document.getElementById('s-pp').textContent = s.pp;
+  document.getElementById('s-gf').textContent = s.gf;
+  document.getElementById('s-gc').textContent = s.gc;
+  document.getElementById('s-pts').textContent = s.pts;
+
+  // Position
+  const sorted = getSortedStandings();
+  const itPos = sorted.findIndex(r => r.team === 'IT F.C') + 1;
+  document.getElementById('it-pos').textContent = itPos > 0 ? `#${itPos}` : '—';
+
+  // Form (last 5 IT results)
+  const form = [];
+  outer: for (const f of FECHAS) {
+    for (let mi=0; mi<f.matches.length; mi++) {
+      const m = f.matches[mi];
+      if (m.e1 === 'IT F.C' || m.e2 === 'IT F.C') {
+        const sc = getScore(f.num, mi);
+        if (sc !== null) {
+          const itIsE1 = m.e1 === 'IT F.C';
+          const itG = itIsE1 ? sc.g1 : sc.g2;
+          const rivG = itIsE1 ? sc.g2 : sc.g1;
+          form.push(itG > rivG ? 'W' : itG < rivG ? 'L' : 'D');
+        } else {
+          form.push('P');
+        }
+      }
+      if (form.length >= 5) break outer;
+    }
+  }
+  const last5 = form.slice(-5);
+  while (last5.length < 5) last5.unshift('P');
+  document.getElementById('it-form').innerHTML = last5.map(r =>
+    `<div class="form-dot ${r}">${r}</div>`).join('');
+
+  // Next match
+  let found = false;
+  for (const f of FECHAS) {
+    for (let mi=0; mi<f.matches.length; mi++) {
+      const m = f.matches[mi];
+      if (m.e1 === 'IT F.C' || m.e2 === 'IT F.C') {
+        const sc = getScore(f.num, mi);
+        if (sc === null) {
+          document.getElementById('it-next-match').textContent =
+            `${m.e1} vs ${m.e2}`;
+          document.getElementById('it-next-date').textContent =
+            `📅 ${m.d} · 7:00 PM · FECHA ${f.num}`;
+          found = true; break;
+        }
+      }
+    }
+    if (found) break;
+  }
+  if (!found) {
+    document.getElementById('it-next-match').textContent = 'TEMPORADA FINALIZADA';
+    document.getElementById('it-next-date').textContent = '🏆 TODOS LOS PARTIDOS COMPLETADOS';
+  }
+}
+
+function renderITMatchList() {
+  const container = document.getElementById('it-match-list');
+  container.innerHTML = '';
+  FECHAS.forEach(f => {
+    f.matches.forEach((m, mi) => {
+      if (m.e1 !== 'IT F.C' && m.e2 !== 'IT F.C') return;
+      const sc = getScore(f.num, mi);
+      let cls = 'pending', resText = 'PENDIENTE', scoreTxt = '— : —';
+      if (sc !== null) {
+        const itIsE1 = m.e1 === 'IT F.C';
+        const itG = itIsE1 ? sc.g1 : sc.g2, rivG = itIsE1 ? sc.g2 : sc.g1;
+        scoreTxt = `${sc.g1} : ${sc.g2}`;
+        if (itG > rivG) { cls='win'; resText='VICTORIA ↑'; }
+        else if (itG < rivG) { cls='lose'; resText='DERROTA ↓'; }
+        else { cls='draw'; resText='EMPATE —'; }
+      }
+      const e1html = m.e1==='IT F.C' ? `<span class="it-t">IT F.C</span>` : m.e1;
+      const e2html = m.e2==='IT F.C' ? `<span class="it-t">IT F.C</span>` : m.e2;
+      container.innerHTML += `
+        <div class="it-match-item ${cls}">
+          <div class="imi-fecha">FECHA ${f.num} · ${m.d}</div>
+          <div class="imi-teams">${e1html} vs ${e2html}</div>
+          <div class="imi-result ${cls}">${resText} · ${scoreTxt}</div>
+        </div>`;
+    });
+  });
+}
+
+function renderFechas() {
+  const container = document.getElementById('fechas-container');
+  container.innerHTML = '';
+  FECHAS.forEach(f => {
+    const hasIT = f.matches.some(m => m.e1==='IT F.C'||m.e2==='IT F.C');
+    const block = document.createElement('div');
+    block.className = 'fecha-block';
+    block.id = `fb-${f.num}`;
+
+    let matchesHtml = '';
+    f.matches.forEach((m, mi) => {
+      const isIT = m.e1==='IT F.C' || m.e2==='IT F.C';
+      const sc = getScore(f.num, mi);
+      const key = sk(f.num, mi);
+
+      let g1disp = '—', g2disp = '—';
+      let s1cls = '', s2cls = '';
+      let hasResult = false;
+      if (sc !== null) {
+        g1disp = sc.g1; g2disp = sc.g2; hasResult = true;
+        if (sc.g1 > sc.g2) { s1cls='win'; s2cls='lose'; }
+        else if (sc.g1 < sc.g2) { s1cls='lose'; s2cls='win'; }
+        else { s1cls='draw'; s2cls='draw'; }
+      }
+
+      const e1c = m.e1==='IT F.C' ? 'it' : '';
+      const e2c = m.e2==='IT F.C' ? 'it' : '';
+
+      matchesHtml += `
+        <div class="match-card ${isIT?'it-game':''} ${hasResult?'has-result':''}" id="mc-${key}">
+          <div class="t-side">
+            <div class="t-name ${e1c}">${m.e1}</div>
+            <div class="t-date">${m.d} · 7:00 PM</div>
+          </div>
+          <div class="score-center">
+            <div class="s-box ${s1cls}">
+              <input type="number" min="0" max="99" value="${hasResult?sc.g1:''}"
+                placeholder="—" readonly data-key="${key}" data-which="g1" data-fecha="${f.num}" data-match="${mi}">
+            </div>
+            <span class="s-sep">:</span>
+            <div class="s-box ${s2cls}">
+              <input type="number" min="0" max="99" value="${hasResult?sc.g2:''}"
+                placeholder="—" readonly data-key="${key}" data-which="g2" data-fecha="${f.num}" data-match="${mi}">
+            </div>
+          </div>
+          <div class="t-side t-side-right">
+            <div class="t-name ${e2c}">${m.e2}</div>
+            <div class="t-date">&nbsp;</div>
+          </div>
+        </div>`;
+    });
+
+    block.innerHTML = `
+      <div class="fecha-header" onclick="toggleFecha(${f.num})">
+        <div class="fecha-num">FECHA ${f.num < 10 ? '0'+f.num : f.num}</div>
+        <div class="fecha-meta">${f.label}</div>
+        ${hasIT ? '<div class="fecha-badge">// IT F.C</div>' : ''}
+        <div class="fecha-chevron">▾</div>
+      </div>
+      <div class="fecha-matches">${matchesHtml}</div>`;
+
+    container.appendChild(block);
+  });
+
+  // Event listeners for score changes
+  document.querySelectorAll('.score-center input').forEach(inp => {
+    inp.addEventListener('change', function() {
+      if (this.readOnly) return;
+      const key = this.dataset.key;
+      const fn = parseInt(this.dataset.fecha), mn = parseInt(this.dataset.match);
+      const card = this.closest('.match-card');
+      const inputs = card.querySelectorAll('input');
+      const v1 = inputs[0].value, v2 = inputs[1].value;
+      if (v1 !== '' && v2 !== '') {
+        pushScore(key, v1, v2);
+      }
+    });
+  });
+}
+
+function refreshUI() {
+  // Update score boxes
+  document.querySelectorAll('.score-center input').forEach(inp => {
+    const fn = parseInt(inp.dataset.fecha);
+    const mn = parseInt(inp.dataset.match);
+    const sc = getScore(fn, mn);
+    const which = inp.dataset.which;
+    if (sc !== null) {
+      inp.value = sc[which];
+      const card = inp.closest('.match-card');
+      card.classList.add('has-result');
+      const boxes = card.querySelectorAll('.s-box');
+      boxes.forEach(b => { b.classList.remove('win','lose','draw'); });
+      if (sc.g1 > sc.g2) { boxes[0].classList.add('win'); boxes[1].classList.add('lose'); }
+      else if (sc.g1 < sc.g2) { boxes[0].classList.add('lose'); boxes[1].classList.add('win'); }
+      else { boxes[0].classList.add('draw'); boxes[1].classList.add('draw'); }
+    } else {
+      inp.value = '';
+    }
+  });
+  renderStandings();
+  renderITMatchList();
+  updateITSpotlight();
+}
+
+function toggleFecha(num) {
+  document.getElementById(`fb-${num}`).classList.toggle('collapsed');
+}
+
+/* ════════════════════════════════════════
+   ADMIN
+════════════════════════════════════════ */
+function toggleAdminPanel() {
+  const panel = document.getElementById('admin-panel');
+  if (isAdmin) {
+    exitAdmin();
+  } else {
+    panel.classList.toggle('show');
+    if (panel.classList.contains('show')) {
+      document.getElementById('pin-input').focus();
+    }
+  }
+}
+
+function verifyPin() {
+  const pin = document.getElementById('pin-input').value;
+  if (pin === ADMIN_PIN) {
+    isAdmin = true;
+    document.getElementById('admin-panel').classList.remove('show');
+    document.getElementById('admin-btn').classList.add('active');
+    document.getElementById('admin-btn').textContent = '[SALIR ADMIN]';
+    document.getElementById('admin-indicator').classList.add('show');
+    // Enable all inputs
+    document.querySelectorAll('.score-center input').forEach(i => i.removeAttribute('readonly'));
+    showToast('⚡ MODO ADMIN ACTIVADO');
+    document.getElementById('pin-input').value = '';
+  } else {
+    document.getElementById('pin-err').style.display = 'block';
+    setTimeout(() => { document.getElementById('pin-err').style.display='none'; }, 2000);
+  }
+}
+
+function exitAdmin() {
+  isAdmin = false;
+  document.getElementById('admin-btn').classList.remove('active');
+  document.getElementById('admin-btn').textContent = '[ADMIN MODE]';
+  document.getElementById('admin-indicator').classList.remove('show');
+  document.querySelectorAll('.score-center input').forEach(i => i.setAttribute('readonly', ''));
+  showToast('MODO ADMIN DESACTIVADO');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && isAdmin) exitAdmin();
+  if (e.key === 'Enter' && document.getElementById('admin-panel').classList.contains('show')) verifyPin();
+});
+
+/* ════════════════════════════════════════
+   TOAST
+════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg, isErr = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.classList.remove('show'); }, 2200);
+}
+</script>
+</body>
+</html>
