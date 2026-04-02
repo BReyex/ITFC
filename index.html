@@ -203,14 +203,15 @@ body {
   border: 1.5px solid var(--border-dark);
   color: var(--black);
   font-family: var(--mono);
-  font-size: 16px;
+  font-size: 13px;
   padding: 10px 14px;
   border-radius: 4px;
   outline: none;
   margin-bottom: 8px;
-  letter-spacing: 6px;
-  text-align: center;
+  letter-spacing: 1px;
+  text-align: left;
   transition: border-color .2s;
+  box-sizing: border-box;
 }
 .ap-input:focus { border-color: var(--red); }
 .ap-hint { font-size: 11px; color: var(--gray); margin-bottom: 12px; }
@@ -923,10 +924,11 @@ footer .ft-brand .it-foot { color: var(--red); }
 <!-- ════ ADMIN PANEL ════ -->
 <div id="admin-panel">
   <div class="ap-title">// Acceso Admin</div>
-  <input class="ap-input" id="pin-input" type="password" maxlength="8" placeholder="••••" onkeydown="if(event.key==='Enter') verifyPin()">
-  <div class="ap-hint">Ingresa el PIN para habilitar la edición de resultados</div>
-  <button class="btn-sm" onclick="verifyPin()">Autenticar</button>
-  <div class="ap-err" id="pin-err">PIN incorrecto</div>
+  <input class="ap-input" id="admin-email" type="email" placeholder="correo@ejemplo.com" autocomplete="username" onkeydown="if(event.key==='Enter') document.getElementById('admin-pass').focus()">
+  <input class="ap-input" id="admin-pass" type="password" placeholder="Contraseña" autocomplete="current-password" onkeydown="if(event.key==='Enter') verifyAdmin()">
+  <div class="ap-hint">Ingresa tus credenciales para habilitar la edición de resultados</div>
+  <button class="btn-sm" id="admin-auth-btn" onclick="verifyAdmin()">Autenticar</button>
+  <div class="ap-err" id="pin-err">Credenciales incorrectas</div>
 </div>
 
 <!-- ════ TOAST ════ -->
@@ -1037,7 +1039,8 @@ footer .ft-brand .it-foot { color: var(--red); }
 /* ════════════════════════════════════════
    ⚙️  CONFIG — EDITAR AQUÍ
 ════════════════════════════════════════ */
-const ADMIN_PIN = '1234'; // Cambia este PIN
+// Firebase Web API Key — encuéntrala en Firebase Console → Configuración del proyecto → General → apiKey
+const FIREBASE_API_KEY = 'AIzaSyCfywL3aSpAAaP4F7-4J9V3X6WG4IXXlUM';
 
 /* ════════════════════════════════════════
    DATOS DEL TORNEO
@@ -1223,6 +1226,7 @@ let DB_URL =  'https://poma2026-25b13-default-rtdb.firebaseio.com/';
 let scores = {};
 let isAdmin = false;
 let syncInterval = null;
+let idToken = null;
 
 /* ════════════════════════════════════════
    SETUP
@@ -1272,12 +1276,14 @@ async function fetchScores() {
 }
 
 async function pushScore(key, g1, g2) {
+  if (!idToken) { showToast('✗ Sin autenticación', true); return; }
   try {
-    const res = await fetch(`${DB_URL}/scores/${key}.json`, {
+    const res = await fetch(`${DB_URL}/scores/${key}.json?auth=${idToken}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({g1: parseInt(g1), g2: parseInt(g2)})
     });
+    if (res.status === 401) { showToast('✗ Sesión expirada, vuelve a iniciar sesión', true); exitAdmin(); return; }
     if (!res.ok) throw new Error('HTTP ' + res.status);
     scores[key] = {g1: parseInt(g1), g2: parseInt(g2)};
     refreshUI();
@@ -1579,31 +1585,51 @@ function toggleAdminPanel() {
   } else {
     panel.classList.toggle('show');
     if (panel.classList.contains('show')) {
-      document.getElementById('pin-input').focus();
+      document.getElementById('admin-email').focus();
     }
   }
 }
 
-function verifyPin() {
-  const pin = document.getElementById('pin-input').value;
-  if (pin === ADMIN_PIN) {
+async function verifyAdmin() {
+  const email = document.getElementById('admin-email').value.trim();
+  const password = document.getElementById('admin-pass').value;
+  const btn = document.getElementById('admin-auth-btn');
+  if (!email || !password) return;
+  btn.textContent = 'Verificando...';
+  btn.disabled = true;
+  try {
+    const res = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FIREBASE_API_KEY}`,
+      {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email, password, returnSecureToken: true})
+      }
+    );
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || 'AUTH_ERROR');
+    idToken = data.idToken;
     isAdmin = true;
     document.getElementById('admin-panel').classList.remove('show');
     document.getElementById('admin-btn').classList.add('active');
     document.getElementById('admin-btn').textContent = '[Salir Admin]';
     document.getElementById('admin-indicator').classList.add('show');
-    // Enable all inputs
     document.querySelectorAll('.score-center input').forEach(i => i.removeAttribute('readonly'));
     showToast('⚡ Modo Admin activado');
-    document.getElementById('pin-input').value = '';
-  } else {
+    document.getElementById('admin-email').value = '';
+    document.getElementById('admin-pass').value = '';
+  } catch(e) {
     document.getElementById('pin-err').style.display = 'block';
-    setTimeout(() => { document.getElementById('pin-err').style.display='none'; }, 2000);
+    setTimeout(() => { document.getElementById('pin-err').style.display='none'; }, 2500);
+  } finally {
+    btn.textContent = 'Autenticar';
+    btn.disabled = false;
   }
 }
 
 function exitAdmin() {
   isAdmin = false;
+  idToken = null;
   document.getElementById('admin-btn').classList.remove('active');
   document.getElementById('admin-btn').textContent = '[Admin]';
   document.getElementById('admin-indicator').classList.remove('show');
@@ -1613,7 +1639,6 @@ function exitAdmin() {
 
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape' && isAdmin) exitAdmin();
-  if (e.key === 'Enter' && document.getElementById('admin-panel').classList.contains('show')) verifyPin();
 });
 
 /* ════════════════════════════════════════
