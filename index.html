@@ -1193,10 +1193,91 @@ select.tr-input { cursor: pointer; }
   border: 2px dashed var(--border); border-radius: 4px;
 }
 
+/* ── Squad (Cuadro) ── */
+.tr-cuadro-section { margin-bottom: 24px; }
+.tr-cuadro-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  margin-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+}
+.tr-cuadro-section-title {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dark);
+}
+.tr-cuadro-section-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--gray);
+  letter-spacing: 1px;
+  margin-left: auto;
+}
+.sec-titular .tr-cuadro-section-title { color: var(--red); }
+.sec-a .tr-cuadro-section-title { color: var(--blue); }
+
+.tr-squad-row {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--border-dark);
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  display: grid;
+  grid-template-columns: 36px 1fr auto auto auto;
+  align-items: center;
+  gap: 10px;
+}
+.sec-titular .tr-squad-row { border-left-color: var(--red); background: var(--red-dim); }
+.sec-a .tr-squad-row { border-left-color: var(--blue); }
+.tr-squad-num { font-family: var(--display); font-size: 15px; font-weight: 800; color: var(--red); text-align: center; }
+.tr-squad-name { font-family: var(--display); font-size: 13px; font-weight: 700; letter-spacing: 0.5px; color: var(--black); text-transform: uppercase; }
+.tr-squad-pos { font-family: var(--mono); font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin-top: 1px; }
+.tr-squad-score { text-align: right; min-width: 72px; }
+.tr-squad-score-val { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--dark); }
+.tr-squad-score-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+.tr-squad-score-fill { height: 100%; border-radius: 2px; transition: width .4s ease; }
+.tr-squad-peso { font-family: var(--mono); font-size: 12px; color: var(--red); letter-spacing: 0; white-space: nowrap; min-width: 32px; text-align: center; }
+.tr-cat-badge {
+  font-family: var(--display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  padding: 3px 8px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.cat-titular { background: var(--red); color: var(--white); }
+.cat-a { background: var(--blue); color: var(--white); }
+.cat-b { background: var(--bg2); color: var(--gray); border: 1px solid var(--border-dark); }
+
+.tr-cuadro-legend {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin-top: 8px;
+}
+.tr-legend-title { font-family: var(--display); font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); margin-bottom: 10px; }
+.tr-legend-items { display: flex; flex-wrap: wrap; gap: 8px 20px; font-family: var(--mono); font-size: 11px; color: var(--dark); margin-bottom: 10px; }
+.tr-legend-tiers { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; font-family: var(--mono); font-size: 11px; color: var(--dark); }
+.tr-legend-note { font-family: var(--mono); font-size: 10px; color: var(--gray); margin-top: 10px; letter-spacing: 0.5px; line-height: 1.5; }
+
+/* Peso dots on player cards */
+.tr-player-peso { font-family: var(--mono); font-size: 12px; color: var(--red); letter-spacing: 0; margin-top: 2px; }
+
 @media (max-width: 700px) {
   .tr-topbar { top: 0; padding: 8px 16px; }
   .tr-content { padding: 20px 16px 40px; }
   .tr-att-item { grid-template-columns: 32px 1fr 88px 28px; gap: 8px; }
+  .tr-squad-row { grid-template-columns: 28px 1fr auto auto; }
+  .tr-squad-peso { display: none; }
 }
 @media (max-width: 480px) {
   .tr-topbar-title { display: none; }
@@ -1369,6 +1450,7 @@ select.tr-input { cursor: pointer; }
     <div class="tr-topbar-title"><span class="accent">IT F.C</span> // ENTRENAMIENTOS</div>
     <div class="tr-topbar-tabs">
       <button class="tr-tab-btn" id="tr-tab-list" onclick="showTrainingView('list')">Entrenos</button>
+      <button class="tr-tab-btn" id="tr-tab-cuadro" onclick="showTrainingView('cuadro')">Cuadro</button>
       <button class="tr-tab-btn" id="tr-tab-players" onclick="showTrainingView('players')">Jugadores</button>
     </div>
   </div>
@@ -1462,6 +1544,15 @@ select.tr-input { cursor: pointer; }
               <option value="Delantero">Delantero</option>
             </select>
           </div>
+          <div class="tr-form-group">
+            <label class="tr-label">Bagaje / Peso</label>
+            <select class="tr-input" id="tr-p-peso">
+              <option value="0">○○○ — Nuevo</option>
+              <option value="1">●○○ — Importante</option>
+              <option value="2">●●○ — Referente</option>
+              <option value="3">●●● — Inamovible</option>
+            </select>
+          </div>
         </div>
         <input type="hidden" id="tr-p-edit-id">
         <div class="tr-form-actions">
@@ -1472,6 +1563,35 @@ select.tr-input { cursor: pointer; }
 
       <div id="tr-players-container">
         <div class="tr-empty">No hay jugadores registrados</div>
+      </div>
+    </div>
+
+    <!-- CUADRO VIEW -->
+    <div id="tr-cuadro-view" class="tr-view">
+      <div class="tr-view-header">
+        <div>
+          <div class="tr-view-title">Cuadro Titular</div>
+          <div class="tr-view-sub">Últimas 4 sesiones · Piso por bagaje aplicado</div>
+        </div>
+        <button class="tr-back-btn" onclick="renderSquadView()">↺ Recalcular</button>
+      </div>
+      <div id="tr-cuadro-container">
+        <div class="tr-empty">Cargando cuadro...</div>
+      </div>
+      <div class="tr-cuadro-legend">
+        <div class="tr-legend-title">Cómo se calcula</div>
+        <div class="tr-legend-items">
+          <span><strong>Puntual</strong> (≤15 min tarde) = 1.0 pt</span>
+          <span><strong>Tarde</strong> (16–30 min) = 0.5 pt</span>
+          <span><strong>Muy tarde</strong> (&gt;30 min) = 0.25 pt</span>
+          <span><strong>Ausente</strong> = 0 pt</span>
+        </div>
+        <div class="tr-legend-tiers">
+          <span class="tr-cat-badge cat-titular">TITULAR</span><span>≥ 3.0 pts</span>
+          <span class="tr-cat-badge cat-a">SUP. A</span><span>≥ 2.0 pts</span>
+          <span class="tr-cat-badge cat-b">SUP. B</span><span>&lt; 2.0 pts</span>
+        </div>
+        <p class="tr-legend-note">El bagaje (●) define una categoría mínima garantizada independientemente del puntaje de entrenos.</p>
       </div>
     </div>
 
@@ -2130,6 +2250,7 @@ function showTrainingView(view) {
   if (tab) tab.classList.add('active');
   if (view === 'list') renderTrainingList();
   if (view === 'players') renderPlayersList();
+  if (view === 'cuadro') renderSquadView();
 }
 
 /* ── Firebase REST ── */
@@ -2228,10 +2349,11 @@ async function savePlayer() {
   const name     = document.getElementById('tr-p-name').value.trim();
   const number   = parseInt(document.getElementById('tr-p-number').value);
   const position = document.getElementById('tr-p-position').value;
+  const peso     = parseInt(document.getElementById('tr-p-peso').value) || 0;
   const editId   = document.getElementById('tr-p-edit-id').value;
   if (!name || !number) { showToast('Nombre y número son requeridos', true); return; }
   const id   = editId || Date.now();
-  const data = { name, number, position };
+  const data = { name, number, position, peso };
   try {
     const res = await fetch(`${DB_URL}/players/${id}.json?auth=${idToken}`, {
       method: 'PUT',
@@ -2353,21 +2475,25 @@ function renderPlayersList() {
     container.innerHTML = '<div class="tr-empty">No hay jugadores registrados</div>';
     return;
   }
-  container.innerHTML = players.map(([id, p]) => `
+  container.innerHTML = players.map(([id, p]) => {
+    const peso = parseInt(p.peso) || 0;
+    const pesoDots = '●'.repeat(peso) + '○'.repeat(3 - peso);
+    return `
     <div class="tr-player-card">
       <div class="tr-player-left">
         <div class="tr-player-badge">${p.number || '?'}</div>
         <div>
           <div class="tr-player-name">${p.name || '—'}</div>
           <div class="tr-player-pos-tag">${p.position || '—'}</div>
+          <div class="tr-player-peso">${pesoDots}</div>
         </div>
       </div>
       <div class="tr-player-actions">
         <button class="tr-btn-edit-sm" onclick="editPlayer('${id}')">Editar</button>
         <button class="tr-btn-icon" onclick="deletePlayer('${id}')">✕</button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 /* ── Form helpers ── */
@@ -2390,6 +2516,7 @@ function openNewPlayerForm() {
   document.getElementById('tr-p-name').value     = '';
   document.getElementById('tr-p-number').value   = '';
   document.getElementById('tr-p-position').value = 'Portero';
+  document.getElementById('tr-p-peso').value     = '0';
   document.getElementById('tr-p-edit-id').value  = '';
   document.getElementById('tr-player-form').style.display = 'block';
   document.getElementById('tr-p-name').focus();
@@ -2402,6 +2529,7 @@ function editPlayer(id) {
   document.getElementById('tr-p-name').value     = p.name     || '';
   document.getElementById('tr-p-number').value   = p.number   || '';
   document.getElementById('tr-p-position').value = p.position || 'Portero';
+  document.getElementById('tr-p-peso').value     = p.peso !== undefined ? String(p.peso) : '0';
   document.getElementById('tr-p-edit-id').value  = id;
   document.getElementById('tr-player-form').style.display = 'block';
   document.getElementById('tr-p-name').focus();
@@ -2410,6 +2538,114 @@ function editPlayer(id) {
 function closePlayerForm() {
   document.getElementById('tr-player-form').style.display = 'none';
   document.getElementById('tr-p-edit-id').value = '';
+}
+
+/* ── Squad computation ── */
+const SQUAD_WINDOW   = 4;
+const PESO_FLOOR_MAP = { 0: null, 1: 'B', 2: 'A', 3: 'Titular' };
+const CAT_RANK       = { 'B': 0, 'A': 1, 'Titular': 2 };
+
+function timeDiffMin(t1, t2) {
+  if (!t1 || !t2) return 0;
+  const [h1, m1] = t1.split(':').map(Number);
+  const [h2, m2] = t2.split(':').map(Number);
+  return (h2 * 60 + m2) - (h1 * 60 + m1);
+}
+
+function sessionScore(training, playerId) {
+  const att = (training.attendance || {})[playerId];
+  if (!att || !att.present) return 0;
+  if (!training.startTime || !att.arrivedAt) return 1.0;
+  const diff = timeDiffMin(training.startTime, att.arrivedAt);
+  if (diff <= 15) return 1.0;
+  if (diff <= 30) return 0.5;
+  return 0.25;
+}
+
+function getPlayerCategory(score, peso) {
+  const p = parseInt(peso) || 0;
+  let cat = score >= 3.0 ? 'Titular' : score >= 2.0 ? 'A' : 'B';
+  const floor = PESO_FLOOR_MAP[p];
+  if (floor && CAT_RANK[floor] > CAT_RANK[cat]) cat = floor;
+  return cat;
+}
+
+function computeSquad() {
+  const sessions = Object.entries(trTrainings)
+    .sort((a, b) => b[0] - a[0])
+    .slice(0, SQUAD_WINDOW)
+    .map(([, t]) => t);
+
+  return Object.entries(trPlayers).map(([pid, p]) => {
+    const score = sessions.reduce((sum, t) => sum + sessionScore(t, pid), 0);
+    const cat   = getPlayerCategory(score, p.peso);
+    return { pid, ...p, score, cat, window: sessions.length };
+  });
+}
+
+function renderSquadView() {
+  const container = document.getElementById('tr-cuadro-container');
+  if (!container) return;
+
+  const squad = computeSquad();
+  if (!squad.length) {
+    container.innerHTML = '<div class="tr-empty">Agrega jugadores primero</div>';
+    return;
+  }
+
+  const byCategory = {
+    'Titular': squad.filter(p => p.cat === 'Titular').sort((a, b) => b.score - a.score),
+    'A':       squad.filter(p => p.cat === 'A').sort((a, b) => b.score - a.score),
+    'B':       squad.filter(p => p.cat === 'B').sort((a, b) => b.score - a.score),
+  };
+  const maxPts = squad[0]?.window || SQUAD_WINDOW;
+
+  function playerRow(p) {
+    const pct      = maxPts > 0 ? Math.min(100, (p.score / maxPts) * 100) : 0;
+    const barColor = p.score >= 3 ? 'var(--green)' : p.score >= 2 ? 'var(--blue)' : 'var(--gray-light)';
+    const peso     = parseInt(p.peso) || 0;
+    const dots     = '●'.repeat(peso) + '○'.repeat(3 - peso);
+    const badge    = p.cat === 'Titular'
+      ? '<span class="tr-cat-badge cat-titular">Titular</span>'
+      : p.cat === 'A'
+        ? '<span class="tr-cat-badge cat-a">Sup. A</span>'
+        : '<span class="tr-cat-badge cat-b">Sup. B</span>';
+    return `
+      <div class="tr-squad-row">
+        <div class="tr-squad-num">#${p.number || '?'}</div>
+        <div>
+          <div class="tr-squad-name">${p.name || '—'}</div>
+          <div class="tr-squad-pos">${p.position || '—'}</div>
+        </div>
+        <div class="tr-squad-score">
+          <div class="tr-squad-score-val">${p.score.toFixed(1)} / ${maxPts}.0</div>
+          <div class="tr-squad-score-bar">
+            <div class="tr-squad-score-fill" style="width:${pct}%;background:${barColor};"></div>
+          </div>
+        </div>
+        <div class="tr-squad-peso" title="Bagaje: ${peso}">${dots}</div>
+        ${badge}
+      </div>`;
+  }
+
+  const sections = [
+    { key: 'Titular', cssClass: 'sec-titular', label: 'Titulares' },
+    { key: 'A',       cssClass: 'sec-a',       label: 'Suplentes A' },
+    { key: 'B',       cssClass: 'sec-b',       label: 'Suplentes B' },
+  ];
+
+  container.innerHTML = sections.map(s => {
+    const players = byCategory[s.key];
+    if (!players.length) return '';
+    return `
+      <div class="tr-cuadro-section ${s.cssClass}">
+        <div class="tr-cuadro-section-header">
+          <div class="tr-cuadro-section-title">${s.label}</div>
+          <div class="tr-cuadro-section-count">${players.length} jugador${players.length !== 1 ? 'es' : ''}</div>
+        </div>
+        ${players.map(playerRow).join('')}
+      </div>`;
+  }).join('');
 }
 
 /* Exit admin while in trainings → return to main */
