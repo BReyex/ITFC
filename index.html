@@ -885,6 +885,329 @@ footer .ft-brand .it-foot { color: var(--red); }
   footer { padding: 14px 16px; }
 }
 
+/* ═══════════════════════════════════════
+   TRAINING MODULE
+═══════════════════════════════════════ */
+#tr-header-btn {
+  display: none;
+  background: transparent;
+  border: 1.5px solid var(--red);
+  color: var(--red);
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 7px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all .15s;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+#tr-header-btn:hover { background: var(--red); color: var(--white); }
+.ap-mode-indicator.show ~ header #tr-header-btn { display: block; }
+
+#training-section { min-height: calc(100vh - 72px); }
+
+.tr-topbar {
+  background: var(--white);
+  border-bottom: 2px solid var(--border);
+  padding: 10px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: sticky;
+  top: 72px;
+  z-index: 90;
+  flex-wrap: wrap;
+  box-shadow: 0 1px 0 var(--border);
+}
+.tr-back-btn {
+  background: transparent;
+  border: 1.5px solid var(--border-dark);
+  color: var(--gray);
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all .15s;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tr-back-btn:hover { border-color: var(--black); color: var(--black); }
+.tr-topbar-title {
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: var(--black);
+  text-transform: uppercase;
+  flex: 1;
+}
+.tr-topbar-title .accent { color: var(--red); }
+.tr-topbar-tabs { display: flex; gap: 6px; }
+.tr-tab-btn {
+  background: transparent;
+  border: 1.5px solid var(--border-dark);
+  color: var(--gray);
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all .15s;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.tr-tab-btn:hover { border-color: var(--red); color: var(--red); }
+.tr-tab-btn.active { background: var(--black); border-color: var(--black); color: var(--white); }
+
+.tr-content { max-width: 860px; margin: 0 auto; padding: 28px 32px 60px; }
+.tr-view { display: none; }
+.tr-view.active { display: block; }
+
+.tr-view-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.tr-view-title {
+  font-family: var(--display);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--black);
+  text-transform: uppercase;
+  line-height: 1;
+}
+.tr-view-sub {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--gray);
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+.tr-back-link {
+  background: none; border: none;
+  color: var(--gray);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  padding: 0; margin-bottom: 6px;
+  display: block;
+  transition: color .15s;
+}
+.tr-back-link:hover { color: var(--black); }
+
+.tr-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px;
+  margin-bottom: 12px;
+}
+.tr-card-title {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: var(--black);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.tr-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+.tr-form-group { display: flex; flex-direction: column; gap: 5px; }
+.tr-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--gray);
+  text-transform: uppercase;
+}
+.tr-input {
+  background: var(--bg);
+  border: 1.5px solid var(--border-dark);
+  color: var(--black);
+  font-family: var(--mono);
+  font-size: 13px;
+  padding: 9px 12px;
+  border-radius: 4px;
+  outline: none;
+  transition: border-color .15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.tr-input:focus { border-color: var(--red); }
+select.tr-input { cursor: pointer; }
+.tr-textarea { resize: vertical; min-height: 68px; font-family: var(--body); font-size: 13px; }
+.tr-form-actions { display: flex; gap: 8px; margin-top: 16px; }
+
+.tr-training-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border-dark);
+  border-radius: 4px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.tr-training-card:hover { border-left-color: var(--red); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.tr-training-date {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--black);
+  text-transform: uppercase;
+}
+.tr-training-time { font-family: var(--mono); font-size: 11px; color: var(--gray); letter-spacing: 1px; margin-top: 3px; }
+.tr-training-notes { font-family: var(--body); font-size: 12px; color: var(--gray); margin-top: 4px; font-style: italic; }
+.tr-training-badge {
+  background: var(--bg);
+  border: 1px solid var(--border-dark);
+  border-radius: 3px;
+  padding: 6px 12px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.tr-training-badge-val { font-family: var(--display); font-size: 22px; font-weight: 800; color: var(--red); line-height: 1; }
+.tr-training-badge-lbl { font-family: var(--mono); font-size: 9px; letter-spacing: 1.5px; color: var(--gray); text-transform: uppercase; }
+.tr-btn-icon {
+  background: none;
+  border: 1px solid var(--border-dark);
+  color: var(--gray-light);
+  font-size: 12px; padding: 5px 9px;
+  border-radius: 3px; cursor: pointer;
+  transition: all .12s;
+  font-family: var(--mono); line-height: 1;
+  flex-shrink: 0;
+}
+.tr-btn-icon:hover { border-color: var(--red); color: var(--red); }
+.tr-btn-edit-sm {
+  background: none;
+  border: 1px solid var(--border-dark);
+  color: var(--gray);
+  font-size: 10px; padding: 5px 10px;
+  border-radius: 3px; cursor: pointer;
+  transition: all .12s;
+  font-family: var(--display);
+  font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.tr-btn-edit-sm:hover { border-color: var(--blue); color: var(--blue); }
+
+.tr-detail-info {
+  background: var(--black);
+  border-radius: 4px;
+  padding: 16px 20px;
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.tr-detail-info-lbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.tr-detail-info-val {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 1px;
+}
+
+.tr-att-item {
+  display: grid;
+  grid-template-columns: 38px 1fr 100px 32px;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.tr-att-item:last-child { border-bottom: none; }
+.tr-att-num { font-family: var(--display); font-size: 15px; font-weight: 800; color: var(--red); text-align: center; }
+.tr-att-name { font-family: var(--display); font-size: 13px; font-weight: 700; letter-spacing: 0.5px; color: var(--dark); text-transform: uppercase; }
+.tr-att-pos { font-family: var(--mono); font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin-top: 1px; }
+.tr-att-time .tr-input { padding: 6px 8px; font-size: 12px; }
+.tr-chk { width: 20px; height: 20px; cursor: pointer; accent-color: var(--red); display: block; margin: 0 auto; }
+.tr-att-item:has(.tr-chk:not(:checked)) .tr-att-time { visibility: hidden; }
+
+.tr-player-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: border-color .12s;
+}
+.tr-player-card:hover { border-color: var(--border-dark); }
+.tr-player-left { display: flex; align-items: center; gap: 14px; }
+.tr-player-badge {
+  background: var(--red); color: var(--white);
+  font-family: var(--display); font-size: 16px; font-weight: 800;
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 4px; flex-shrink: 0;
+}
+.tr-player-name { font-family: var(--display); font-size: 14px; font-weight: 700; letter-spacing: 0.5px; color: var(--black); text-transform: uppercase; }
+.tr-player-pos-tag { font-family: var(--mono); font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 2px; }
+.tr-player-actions { display: flex; gap: 6px; }
+
+.tr-empty {
+  text-align: center; padding: 48px 20px;
+  color: var(--gray);
+  font-family: var(--mono);
+  font-size: 11px; letter-spacing: 1.5px;
+  text-transform: uppercase;
+  border: 2px dashed var(--border); border-radius: 4px;
+}
+
+@media (max-width: 700px) {
+  .tr-topbar { top: 0; padding: 8px 16px; }
+  .tr-content { padding: 20px 16px 40px; }
+  .tr-att-item { grid-template-columns: 32px 1fr 88px 28px; gap: 8px; }
+}
+@media (max-width: 480px) {
+  .tr-topbar-title { display: none; }
+  .tr-att-item { grid-template-columns: 28px 1fr 28px; grid-template-rows: auto auto; row-gap: 4px; }
+  .tr-att-num { grid-row: 1 / 3; align-self: center; }
+  .tr-att-name-cell { grid-column: 2; grid-row: 1; }
+  .tr-att-time { grid-column: 2; grid-row: 2; }
+  .tr-att-check-cell { grid-column: 3; grid-row: 1; }
+  .tr-att-item:has(.tr-chk:not(:checked)) .tr-att-time { display: none; }
+}
+
 </style>
 </head>
 <body>
@@ -947,6 +1270,7 @@ footer .ft-brand .it-foot { color: var(--red); }
       <div class="sync-dot" id="sync-dot"></div>
       <span id="sync-label">Conectando...</span>
     </div>
+    <button id="tr-header-btn" onclick="enterTrainings()">IR A ENTRENOS</button>
     <button class="admin-toggle" id="admin-btn" onclick="toggleAdminPanel()">[Admin]</button>
   </div>
 </header>
@@ -1036,6 +1360,123 @@ footer .ft-brand .it-foot { color: var(--red); }
   <div class="ft-brand"><span class="it-foot">IT F.C</span> // Torneo Roberto Poma 2026 // Dept. de Sistemas</div>
   <span id="last-sync">SYNC: —</span>
 </footer>
+
+<!-- ════ TRAINING SECTION ════ -->
+<div id="training-section" style="display:none;">
+
+  <div class="tr-topbar">
+    <button class="tr-back-btn" onclick="exitTrainings()">← Torneo</button>
+    <div class="tr-topbar-title"><span class="accent">IT F.C</span> // ENTRENAMIENTOS</div>
+    <div class="tr-topbar-tabs">
+      <button class="tr-tab-btn" id="tr-tab-list" onclick="showTrainingView('list')">Entrenos</button>
+      <button class="tr-tab-btn" id="tr-tab-players" onclick="showTrainingView('players')">Jugadores</button>
+    </div>
+  </div>
+
+  <div class="tr-content">
+
+    <!-- LIST VIEW -->
+    <div id="tr-list-view" class="tr-view">
+      <div class="tr-view-header">
+        <div>
+          <div class="tr-view-title">Registro de Entrenos</div>
+          <div class="tr-view-sub">Historial de sesiones de entrenamiento</div>
+        </div>
+        <button class="btn-primary" onclick="openNewTrainingForm()">+ Nuevo Entreno</button>
+      </div>
+
+      <div id="tr-new-form" class="tr-card" style="display:none;">
+        <div class="tr-card-title">Nuevo Entrenamiento</div>
+        <div class="tr-form-grid">
+          <div class="tr-form-group">
+            <label class="tr-label">Fecha</label>
+            <input type="date" class="tr-input" id="tr-new-date">
+          </div>
+          <div class="tr-form-group">
+            <label class="tr-label">Hora inicio</label>
+            <input type="time" class="tr-input" id="tr-new-start">
+          </div>
+          <div class="tr-form-group">
+            <label class="tr-label">Hora fin</label>
+            <input type="time" class="tr-input" id="tr-new-end">
+          </div>
+        </div>
+        <div class="tr-form-group" style="margin-top:12px;">
+          <label class="tr-label">Notas (opcional)</label>
+          <textarea class="tr-input tr-textarea" id="tr-new-notes" placeholder="Observaciones del entrenamiento..."></textarea>
+        </div>
+        <div class="tr-form-actions">
+          <button class="btn-primary" onclick="saveNewTraining()">Guardar Entreno</button>
+          <button class="tr-back-btn" onclick="closeNewTrainingForm()">Cancelar</button>
+        </div>
+      </div>
+
+      <div id="tr-list-container">
+        <div class="tr-empty">Cargando entrenamientos...</div>
+      </div>
+    </div>
+
+    <!-- DETAIL VIEW -->
+    <div id="tr-detail-view" class="tr-view">
+      <div class="tr-view-header">
+        <div>
+          <button class="tr-back-link" onclick="showTrainingView('list')">← Lista de entrenos</button>
+          <div class="tr-view-title" id="tr-detail-title">Detalle</div>
+        </div>
+        <button class="btn-primary" onclick="saveAttendance()">Guardar Asistencia</button>
+      </div>
+      <div class="tr-detail-info" id="tr-detail-info"></div>
+      <div class="tr-card" style="margin-top:16px;">
+        <div class="tr-card-title">Lista de Asistencia</div>
+        <div id="tr-attendance-list"><div class="tr-empty">Cargando...</div></div>
+      </div>
+    </div>
+
+    <!-- PLAYERS VIEW -->
+    <div id="tr-players-view" class="tr-view">
+      <div class="tr-view-header">
+        <div>
+          <div class="tr-view-title">Gestión de Jugadores</div>
+          <div class="tr-view-sub">Plantel IT F.C</div>
+        </div>
+        <button class="btn-primary" onclick="openNewPlayerForm()">+ Nuevo Jugador</button>
+      </div>
+
+      <div id="tr-player-form" class="tr-card" style="display:none;">
+        <div class="tr-card-title" id="tr-player-form-title">Nuevo Jugador</div>
+        <div class="tr-form-grid">
+          <div class="tr-form-group">
+            <label class="tr-label">Nombre</label>
+            <input type="text" class="tr-input" id="tr-p-name" placeholder="Nombre completo">
+          </div>
+          <div class="tr-form-group">
+            <label class="tr-label">Número</label>
+            <input type="number" class="tr-input" id="tr-p-number" placeholder="# camiseta" min="1" max="99">
+          </div>
+          <div class="tr-form-group">
+            <label class="tr-label">Posición</label>
+            <select class="tr-input" id="tr-p-position">
+              <option value="Portero">Portero</option>
+              <option value="Defensa">Defensa</option>
+              <option value="Medio">Medio</option>
+              <option value="Delantero">Delantero</option>
+            </select>
+          </div>
+        </div>
+        <input type="hidden" id="tr-p-edit-id">
+        <div class="tr-form-actions">
+          <button class="btn-primary" onclick="savePlayer()">Guardar Jugador</button>
+          <button class="tr-back-btn" onclick="closePlayerForm()">Cancelar</button>
+        </div>
+      </div>
+
+      <div id="tr-players-container">
+        <div class="tr-empty">No hay jugadores registrados</div>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 <script>
 /* ════════════════════════════════════════
@@ -1654,6 +2095,331 @@ function showToast(msg, isErr = false) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { t.classList.remove('show'); }, 2200);
 }
+
+/* ════════════════════════════════════════
+   TRAINING MODULE
+════════════════════════════════════════ */
+let trPlayers = {};
+let trTrainings = {};
+let currentTrainingId = null;
+
+/* ── Navigation ── */
+function enterTrainings() {
+  if (!isAdmin) { showToast('Solo disponible en modo admin', true); return; }
+  document.querySelector('.it-spotlight').style.display = 'none';
+  document.querySelector('.layout').style.display = 'none';
+  document.querySelector('footer').style.display = 'none';
+  document.getElementById('training-section').style.display = 'block';
+  showTrainingView('list');
+  fetchTrainings();
+  fetchPlayers();
+}
+
+function exitTrainings() {
+  document.getElementById('training-section').style.display = 'none';
+  document.querySelector('.it-spotlight').style.display = '';
+  document.querySelector('.layout').style.display = '';
+  document.querySelector('footer').style.display = '';
+}
+
+function showTrainingView(view) {
+  document.querySelectorAll('.tr-view').forEach(v => v.classList.remove('active'));
+  document.getElementById('tr-' + view + '-view').classList.add('active');
+  document.querySelectorAll('.tr-tab-btn').forEach(b => b.classList.remove('active'));
+  const tab = document.getElementById('tr-tab-' + view);
+  if (tab) tab.classList.add('active');
+  if (view === 'list') renderTrainingList();
+  if (view === 'players') renderPlayersList();
+}
+
+/* ── Firebase REST ── */
+async function fetchTrainings() {
+  try {
+    const res = await fetch(`${DB_URL}/trainings.json`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    trTrainings = data || {};
+    renderTrainingList();
+  } catch(e) {
+    showToast('Error cargando entrenamientos', true);
+  }
+}
+
+async function fetchPlayers() {
+  try {
+    const res = await fetch(`${DB_URL}/players.json`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    trPlayers = data || {};
+    renderPlayersList();
+  } catch(e) {
+    showToast('Error cargando jugadores', true);
+  }
+}
+
+async function saveNewTraining() {
+  if (!isAdmin) return;
+  const date  = document.getElementById('tr-new-date').value;
+  const start = document.getElementById('tr-new-start').value;
+  const end   = document.getElementById('tr-new-end').value;
+  const notes = document.getElementById('tr-new-notes').value.trim();
+  if (!date || !start || !end) { showToast('Fecha y horas son requeridas', true); return; }
+  const id = Date.now();
+  const data = { date, startTime: start, endTime: end };
+  if (notes) data.notes = notes;
+  try {
+    const res = await fetch(`${DB_URL}/trainings/${id}.json?auth=${idToken}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    if (res.status === 401) { showToast('Sesión expirada', true); exitAdmin(); return; }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    trTrainings[id] = data;
+    closeNewTrainingForm();
+    renderTrainingList();
+    showToast('✓ Entreno guardado');
+  } catch(e) {
+    showToast('Error al guardar entreno', true);
+  }
+}
+
+async function deleteTraining(id) {
+  if (!isAdmin) return;
+  if (!confirm('¿Eliminar este entrenamiento?')) return;
+  try {
+    const res = await fetch(`${DB_URL}/trainings/${id}.json?auth=${idToken}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    delete trTrainings[id];
+    renderTrainingList();
+    showToast('✓ Entreno eliminado');
+  } catch(e) {
+    showToast('Error al eliminar', true);
+  }
+}
+
+async function saveAttendance() {
+  if (!isAdmin || !currentTrainingId) return;
+  const attendance = {};
+  document.querySelectorAll('.tr-att-item').forEach(item => {
+    const pid = item.dataset.pid;
+    const present = item.querySelector('.tr-chk').checked;
+    const arrivedAt = item.querySelector('.tr-att-time-input')?.value || '';
+    attendance[pid] = { present, arrivedAt };
+  });
+  try {
+    const res = await fetch(`${DB_URL}/trainings/${currentTrainingId}/attendance.json?auth=${idToken}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(attendance)
+    });
+    if (res.status === 401) { showToast('Sesión expirada', true); exitAdmin(); return; }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    trTrainings[currentTrainingId].attendance = attendance;
+    showToast('✓ Asistencia guardada');
+    renderTrainingList();
+  } catch(e) {
+    showToast('Error al guardar asistencia', true);
+  }
+}
+
+async function savePlayer() {
+  if (!isAdmin) return;
+  const name     = document.getElementById('tr-p-name').value.trim();
+  const number   = parseInt(document.getElementById('tr-p-number').value);
+  const position = document.getElementById('tr-p-position').value;
+  const editId   = document.getElementById('tr-p-edit-id').value;
+  if (!name || !number) { showToast('Nombre y número son requeridos', true); return; }
+  const id   = editId || Date.now();
+  const data = { name, number, position };
+  try {
+    const res = await fetch(`${DB_URL}/players/${id}.json?auth=${idToken}`, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    });
+    if (res.status === 401) { showToast('Sesión expirada', true); exitAdmin(); return; }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    trPlayers[id] = data;
+    closePlayerForm();
+    renderPlayersList();
+    showToast(editId ? '✓ Jugador actualizado' : '✓ Jugador agregado');
+  } catch(e) {
+    showToast('Error al guardar jugador', true);
+  }
+}
+
+async function deletePlayer(id) {
+  if (!isAdmin) return;
+  if (!confirm('¿Eliminar este jugador?')) return;
+  try {
+    const res = await fetch(`${DB_URL}/players/${id}.json?auth=${idToken}`, { method: 'DELETE' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    delete trPlayers[id];
+    renderPlayersList();
+    showToast('✓ Jugador eliminado');
+  } catch(e) {
+    showToast('Error al eliminar jugador', true);
+  }
+}
+
+/* ── Render ── */
+function renderTrainingList() {
+  const container = document.getElementById('tr-list-container');
+  if (!container) return;
+  const ids = Object.keys(trTrainings).sort((a, b) => b - a);
+  if (!ids.length) {
+    container.innerHTML = '<div class="tr-empty">No hay entrenos registrados aún</div>';
+    return;
+  }
+  container.innerHTML = ids.map(id => {
+    const t = trTrainings[id];
+    const att = t.attendance || {};
+    const presentCount = Object.values(att).filter(a => a.present).length;
+    const totalPlayers = Object.keys(trPlayers).length;
+    const dateFormatted = t.date
+      ? new Date(t.date + 'T12:00:00').toLocaleDateString('es-GT', {weekday:'short', day:'2-digit', month:'short', year:'numeric'}).toUpperCase()
+      : '—';
+    return `
+      <div class="tr-training-card" onclick="openTrainingDetail('${id}')">
+        <div style="flex:1;min-width:0;">
+          <div class="tr-training-date">${dateFormatted}</div>
+          <div class="tr-training-time">${t.startTime || '—'} → ${t.endTime || '—'}</div>
+          ${t.notes ? `<div class="tr-training-notes">${t.notes}</div>` : ''}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="tr-training-badge">
+            <div class="tr-training-badge-val">${presentCount}</div>
+            <div class="tr-training-badge-lbl">/ ${totalPlayers} asi</div>
+          </div>
+          <button class="tr-btn-icon" onclick="event.stopPropagation(); deleteTraining('${id}')">✕</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function openTrainingDetail(id) {
+  currentTrainingId = id;
+  const t = trTrainings[id];
+  if (!t) return;
+  const dateFormatted = t.date
+    ? new Date(t.date + 'T12:00:00').toLocaleDateString('es-GT', {weekday:'long', day:'2-digit', month:'long', year:'numeric'}).toUpperCase()
+    : '—';
+  document.getElementById('tr-detail-title').textContent = dateFormatted;
+  document.getElementById('tr-detail-info').innerHTML = `
+    <div><div class="tr-detail-info-lbl">Fecha</div><div class="tr-detail-info-val">${dateFormatted}</div></div>
+    <div><div class="tr-detail-info-lbl">Inicio</div><div class="tr-detail-info-val">${t.startTime || '—'}</div></div>
+    <div><div class="tr-detail-info-lbl">Fin</div><div class="tr-detail-info-val">${t.endTime || '—'}</div></div>
+    ${t.notes ? `<div><div class="tr-detail-info-lbl">Notas</div><div class="tr-detail-info-val" style="font-size:13px;">${t.notes}</div></div>` : ''}
+  `;
+  renderAttendanceList(t);
+  showTrainingView('detail');
+}
+
+function renderAttendanceList(training) {
+  const container = document.getElementById('tr-attendance-list');
+  const players = Object.entries(trPlayers).sort((a, b) => (a[1].number || 0) - (b[1].number || 0));
+  if (!players.length) {
+    container.innerHTML = '<div class="tr-empty">No hay jugadores. Agrégalos primero desde "Jugadores".</div>';
+    return;
+  }
+  const att = training.attendance || {};
+  container.innerHTML = players.map(([pid, p]) => {
+    const record    = att[pid] || {};
+    const isPresent = record.present || false;
+    const arrivedAt = record.arrivedAt || training.startTime || '';
+    return `
+      <div class="tr-att-item" data-pid="${pid}">
+        <div class="tr-att-num">#${p.number || '?'}</div>
+        <div class="tr-att-name-cell">
+          <div class="tr-att-name">${p.name || '—'}</div>
+          <div class="tr-att-pos">${p.position || '—'}</div>
+        </div>
+        <div class="tr-att-time">
+          <input type="time" class="tr-input tr-att-time-input" value="${arrivedAt}">
+        </div>
+        <div class="tr-att-check-cell">
+          <input type="checkbox" class="tr-chk" ${isPresent ? 'checked' : ''}>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderPlayersList() {
+  const container = document.getElementById('tr-players-container');
+  if (!container) return;
+  const players = Object.entries(trPlayers).sort((a, b) => (a[1].number || 0) - (b[1].number || 0));
+  if (!players.length) {
+    container.innerHTML = '<div class="tr-empty">No hay jugadores registrados</div>';
+    return;
+  }
+  container.innerHTML = players.map(([id, p]) => `
+    <div class="tr-player-card">
+      <div class="tr-player-left">
+        <div class="tr-player-badge">${p.number || '?'}</div>
+        <div>
+          <div class="tr-player-name">${p.name || '—'}</div>
+          <div class="tr-player-pos-tag">${p.position || '—'}</div>
+        </div>
+      </div>
+      <div class="tr-player-actions">
+        <button class="tr-btn-edit-sm" onclick="editPlayer('${id}')">Editar</button>
+        <button class="tr-btn-icon" onclick="deletePlayer('${id}')">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* ── Form helpers ── */
+function openNewTrainingForm() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('tr-new-date').value  = today;
+  document.getElementById('tr-new-start').value = '';
+  document.getElementById('tr-new-end').value   = '';
+  document.getElementById('tr-new-notes').value = '';
+  document.getElementById('tr-new-form').style.display = 'block';
+  document.getElementById('tr-new-date').focus();
+}
+
+function closeNewTrainingForm() {
+  document.getElementById('tr-new-form').style.display = 'none';
+}
+
+function openNewPlayerForm() {
+  document.getElementById('tr-player-form-title').textContent = 'Nuevo Jugador';
+  document.getElementById('tr-p-name').value     = '';
+  document.getElementById('tr-p-number').value   = '';
+  document.getElementById('tr-p-position').value = 'Portero';
+  document.getElementById('tr-p-edit-id').value  = '';
+  document.getElementById('tr-player-form').style.display = 'block';
+  document.getElementById('tr-p-name').focus();
+}
+
+function editPlayer(id) {
+  const p = trPlayers[id];
+  if (!p) return;
+  document.getElementById('tr-player-form-title').textContent = 'Editar Jugador';
+  document.getElementById('tr-p-name').value     = p.name     || '';
+  document.getElementById('tr-p-number').value   = p.number   || '';
+  document.getElementById('tr-p-position').value = p.position || 'Portero';
+  document.getElementById('tr-p-edit-id').value  = id;
+  document.getElementById('tr-player-form').style.display = 'block';
+  document.getElementById('tr-p-name').focus();
+}
+
+function closePlayerForm() {
+  document.getElementById('tr-player-form').style.display = 'none';
+  document.getElementById('tr-p-edit-id').value = '';
+}
+
+/* Exit admin while in trainings → return to main */
+const _origExitAdmin = exitAdmin;
+exitAdmin = function() {
+  _origExitAdmin();
+  if (document.getElementById('training-section').style.display !== 'none') {
+    exitTrainings();
+  }
+};
 </script>
 </body>
 </html>
