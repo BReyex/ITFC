@@ -1571,7 +1571,7 @@ select.tr-input { cursor: pointer; }
       <div class="tr-view-header">
         <div>
           <div class="tr-view-title">Cuadro Titular</div>
-          <div class="tr-view-sub">Últimas 4 sesiones · Piso por bagaje aplicado</div>
+          <div class="tr-view-sub">5 Titulares · 4 Sup. A (2 Def + 2 Del) · Resto en B</div>
         </div>
         <button class="tr-back-btn" onclick="renderSquadView()">↺ Recalcular</button>
       </div>
@@ -1579,19 +1579,20 @@ select.tr-input { cursor: pointer; }
         <div class="tr-empty">Cargando cuadro...</div>
       </div>
       <div class="tr-cuadro-legend">
-        <div class="tr-legend-title">Cómo se calcula</div>
+        <div class="tr-legend-title">Estructura del cuadro</div>
+        <div class="tr-legend-tiers">
+          <span class="tr-cat-badge cat-titular">5 TITULARES</span><span>Peso ●●● primero, luego por puntaje</span>
+          <span class="tr-cat-badge cat-a">4 SUP. A</span><span>2 mejores Defensas + 2 mejores Delanteros disponibles</span>
+          <span class="tr-cat-badge cat-b">SUP. B</span><span>Resto del plantel</span>
+        </div>
+        <div class="tr-legend-title" style="margin-top:14px;">Puntaje por sesión (últimas 4)</div>
         <div class="tr-legend-items">
-          <span><strong>Puntual</strong> (≤15 min tarde) = 1.0 pt</span>
+          <span><strong>Puntual</strong> (≤15 min) = 1.0 pt</span>
           <span><strong>Tarde</strong> (16–30 min) = 0.5 pt</span>
           <span><strong>Muy tarde</strong> (&gt;30 min) = 0.25 pt</span>
           <span><strong>Ausente</strong> = 0 pt</span>
         </div>
-        <div class="tr-legend-tiers">
-          <span class="tr-cat-badge cat-titular">TITULAR</span><span>≥ 3.0 pts</span>
-          <span class="tr-cat-badge cat-a">SUP. A</span><span>≥ 2.0 pts</span>
-          <span class="tr-cat-badge cat-b">SUP. B</span><span>&lt; 2.0 pts</span>
-        </div>
-        <p class="tr-legend-note">El bagaje (●) define una categoría mínima garantizada independientemente del puntaje de entrenos.</p>
+        <p class="tr-legend-note">Si no hay suficientes Defensas o Delanteros para completar Suplentes A, se llena con los mejores disponibles del plantel restante.</p>
       </div>
     </div>
 
@@ -2542,9 +2543,9 @@ function closePlayerForm() {
 }
 
 /* ── Squad computation ── */
-const SQUAD_WINDOW   = 4;
-const PESO_FLOOR_MAP = { 0: null, 1: 'B', 2: 'A', 3: 'Titular' };
-const CAT_RANK       = { 'B': 0, 'A': 1, 'Titular': 2 };
+const SQUAD_WINDOW  = 4;
+const TITULAR_SLOTS = 5;
+const SUP_A_SLOTS   = 4; // 2 Defensas + 2 Delanteros
 
 function timeDiffMin(t1, t2) {
   if (!t1 || !t2) return 0;
@@ -2563,25 +2564,50 @@ function sessionScore(training, playerId) {
   return 0.25;
 }
 
-function getPlayerCategory(score, peso) {
-  const p = parseInt(peso) || 0;
-  let cat = score >= 3.0 ? 'Titular' : score >= 2.0 ? 'A' : 'B';
-  const floor = PESO_FLOOR_MAP[p];
-  if (floor && CAT_RANK[floor] > CAT_RANK[cat]) cat = floor;
-  return cat;
-}
-
 function computeSquad() {
   const sessions = Object.entries(trTrainings)
     .sort((a, b) => b[0] - a[0])
     .slice(0, SQUAD_WINDOW)
     .map(([, t]) => t);
 
-  return Object.entries(trPlayers).map(([pid, p]) => {
+  const players = Object.entries(trPlayers).map(([pid, p]) => {
     const score = sessions.reduce((sum, t) => sum + sessionScore(t, pid), 0);
-    const cat   = getPlayerCategory(score, p.peso);
-    return { pid, ...p, score, cat, window: sessions.length };
+    return { pid, ...p, score, window: sessions.length };
   });
+
+  // Priority: peso desc → score desc
+  const sorted = [...players].sort((a, b) => {
+    const pa = parseInt(a.peso) || 0;
+    const pb = parseInt(b.peso) || 0;
+    if (pb !== pa) return pb - pa;
+    return b.score - a.score;
+  });
+
+  // 1. Top TITULAR_SLOTS → Titulares
+  const titulares = sorted.slice(0, TITULAR_SLOTS).map(p => ({ ...p, cat: 'Titular' }));
+  const remaining = sorted.slice(TITULAR_SLOTS);
+
+  // 2. From remaining: 2 best Defensas + 2 best Delanteros → Suplentes A
+  const supAIds = new Set();
+  ['Defensa', 'Delantero'].forEach(pos => {
+    remaining
+      .filter(p => p.position === pos)
+      .slice(0, 2)
+      .forEach(p => supAIds.add(p.pid));
+  });
+
+  // Fill remaining Suplente A slots if not enough of those positions
+  if (supAIds.size < SUP_A_SLOTS) {
+    remaining
+      .filter(p => !supAIds.has(p.pid))
+      .slice(0, SUP_A_SLOTS - supAIds.size)
+      .forEach(p => supAIds.add(p.pid));
+  }
+
+  const supA = remaining.filter(p =>  supAIds.has(p.pid)).map(p => ({ ...p, cat: 'A' }));
+  const supB = remaining.filter(p => !supAIds.has(p.pid)).map(p => ({ ...p, cat: 'B' }));
+
+  return [...titulares, ...supA, ...supB];
 }
 
 function renderSquadView() {
