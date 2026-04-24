@@ -1571,7 +1571,7 @@ select.tr-input { cursor: pointer; }
       <div class="tr-view-header">
         <div>
           <div class="tr-view-title">Cuadro Titular</div>
-          <div class="tr-view-sub">5 Titulares · 4 Sup. A (2 Def + 2 Del) · Resto en B</div>
+          <div class="tr-view-sub">6 Titulares (1P · 3D · 1M · 1Del) · 4 Sup. A (2D · 1M · 1Del) · Resto B</div>
         </div>
         <button class="tr-back-btn" onclick="renderSquadView()">↺ Recalcular</button>
       </div>
@@ -1581,8 +1581,8 @@ select.tr-input { cursor: pointer; }
       <div class="tr-cuadro-legend">
         <div class="tr-legend-title">Estructura del cuadro</div>
         <div class="tr-legend-tiers">
-          <span class="tr-cat-badge cat-titular">5 TITULARES</span><span>Peso ●●● primero, luego por puntaje</span>
-          <span class="tr-cat-badge cat-a">4 SUP. A</span><span>2 mejores Defensas + 2 mejores Delanteros disponibles</span>
+          <span class="tr-cat-badge cat-titular">6 TITULARES</span><span>1 Portero · 3 Defensas · 1 Medio · 1 Delantero — peso ●●● con prioridad</span>
+          <span class="tr-cat-badge cat-a">4 SUP. A</span><span>2 Defensas · 1 Medio · 1 Delantero disponibles</span>
           <span class="tr-cat-badge cat-b">SUP. B</span><span>Resto del plantel</span>
         </div>
         <div class="tr-legend-title" style="margin-top:14px;">Puntaje por sesión (últimas 4)</div>
@@ -2543,9 +2543,9 @@ function closePlayerForm() {
 }
 
 /* ── Squad computation ── */
-const SQUAD_WINDOW  = 4;
-const TITULAR_SLOTS = 5;
-const SUP_A_SLOTS   = 4; // 2 Defensas + 2 Delanteros
+const SQUAD_WINDOW       = 4;
+const TITULAR_COMPOSITION = { Portero: 1, Defensa: 3, Medio: 1, Delantero: 1 }; // 6 titulares
+const SUP_A_COMPOSITION   = { Defensa: 2, Medio: 1, Delantero: 1 };             // 4 suplentes A
 
 function timeDiffMin(t1, t2) {
   if (!t1 || !t2) return 0;
@@ -2562,6 +2562,27 @@ function sessionScore(training, playerId) {
   if (diff <= 15) return 1.0;
   if (diff <= 30) return 0.5;
   return 0.25;
+}
+
+// Fills slots from a sorted pool following a position composition map.
+// Falls back to best available if a position has fewer players than needed.
+function fillByComposition(pool, composition) {
+  const assigned = new Set();
+  const totalSlots = Object.values(composition).reduce((a, b) => a + b, 0);
+
+  for (const [pos, slots] of Object.entries(composition)) {
+    pool.filter(p => p.position === pos && !assigned.has(p.pid))
+        .slice(0, slots)
+        .forEach(p => assigned.add(p.pid));
+  }
+
+  if (assigned.size < totalSlots) {
+    pool.filter(p => !assigned.has(p.pid))
+        .slice(0, totalSlots - assigned.size)
+        .forEach(p => assigned.add(p.pid));
+  }
+
+  return assigned;
 }
 
 function computeSquad() {
@@ -2583,29 +2604,13 @@ function computeSquad() {
     return b.score - a.score;
   });
 
-  // 1. Top TITULAR_SLOTS → Titulares
-  const titulares = sorted.slice(0, TITULAR_SLOTS).map(p => ({ ...p, cat: 'Titular' }));
-  const remaining = sorted.slice(TITULAR_SLOTS);
+  const titularIds = fillByComposition(sorted, TITULAR_COMPOSITION);
+  const remaining  = sorted.filter(p => !titularIds.has(p.pid));
+  const supAIds    = fillByComposition(remaining, SUP_A_COMPOSITION);
 
-  // 2. From remaining: 2 best Defensas + 2 best Delanteros → Suplentes A
-  const supAIds = new Set();
-  ['Defensa', 'Delantero'].forEach(pos => {
-    remaining
-      .filter(p => p.position === pos)
-      .slice(0, 2)
-      .forEach(p => supAIds.add(p.pid));
-  });
-
-  // Fill remaining Suplente A slots if not enough of those positions
-  if (supAIds.size < SUP_A_SLOTS) {
-    remaining
-      .filter(p => !supAIds.has(p.pid))
-      .slice(0, SUP_A_SLOTS - supAIds.size)
-      .forEach(p => supAIds.add(p.pid));
-  }
-
-  const supA = remaining.filter(p =>  supAIds.has(p.pid)).map(p => ({ ...p, cat: 'A' }));
-  const supB = remaining.filter(p => !supAIds.has(p.pid)).map(p => ({ ...p, cat: 'B' }));
+  const titulares = sorted.filter(p =>  titularIds.has(p.pid)).map(p => ({ ...p, cat: 'Titular' }));
+  const supA      = remaining.filter(p =>  supAIds.has(p.pid)).map(p => ({ ...p, cat: 'A' }));
+  const supB      = remaining.filter(p => !supAIds.has(p.pid)).map(p => ({ ...p, cat: 'B' }));
 
   return [...titulares, ...supA, ...supB];
 }
