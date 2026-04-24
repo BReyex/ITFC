@@ -2279,7 +2279,7 @@ async function fetchPlayers() {
 }
 
 async function saveNewTraining() {
-  if (!isAdmin) return;
+  if (!isAdmin || !idToken) { showToast('✗ Sin autenticación', true); return; }
   const date  = document.getElementById('tr-new-date').value;
   const start = document.getElementById('tr-new-start').value;
   const end   = document.getElementById('tr-new-end').value;
@@ -2345,7 +2345,7 @@ async function saveAttendance() {
 }
 
 async function savePlayer() {
-  if (!isAdmin) return;
+  if (!isAdmin || !idToken) { showToast('✗ Sin autenticación', true); return; }
   const name     = document.getElementById('tr-p-name').value.trim();
   const number   = parseInt(document.getElementById('tr-p-number').value);
   const position = document.getElementById('tr-p-position').value;
@@ -2360,14 +2360,15 @@ async function savePlayer() {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(data)
     });
-    if (res.status === 401) { showToast('Sesión expirada', true); exitAdmin(); return; }
+    if (res.status === 401) { showToast('✗ Sesión expirada', true); exitAdmin(); return; }
+    if (res.status === 403) { showToast('✗ Sin permiso — revisa reglas Firebase', true); return; }
     if (!res.ok) throw new Error('HTTP ' + res.status);
     trPlayers[id] = data;
     closePlayerForm();
     renderPlayersList();
     showToast(editId ? '✓ Jugador actualizado' : '✓ Jugador agregado');
   } catch(e) {
-    showToast('Error al guardar jugador', true);
+    showToast('✗ Error: ' + e.message, true);
   }
 }
 
