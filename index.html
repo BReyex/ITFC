@@ -1592,7 +1592,7 @@ select.tr-input { cursor: pointer; }
           <span><strong>Muy tarde</strong> (&gt;30 min) = 0.25 pt</span>
           <span><strong>Ausente</strong> = 0 pt</span>
         </div>
-        <p class="tr-legend-note">Si no hay suficientes Defensas o Delanteros para completar Suplentes A, se llena con los mejores disponibles del plantel restante.</p>
+        <p class="tr-legend-note">Si no hay suficientes Defensas o Delanteros para completar Suplentes, se llena con los mejores disponibles del plantel restante.</p>
       </div>
     </div>
 
@@ -2640,8 +2640,8 @@ function renderSquadView() {
     const badge    = p.cat === 'Titular'
       ? '<span class="tr-cat-badge cat-titular">Titular</span>'
       : p.cat === 'A'
-        ? '<span class="tr-cat-badge cat-a">Sup. A</span>'
-        : '<span class="tr-cat-badge cat-b">Sup. B</span>';
+        ? '<span class="tr-cat-badge cat-a">Suplente</span>'
+        : '<span class="tr-cat-badge cat-b">Reserva</span>';
     return `
       <div class="tr-squad-row">
         <div class="tr-squad-num">#${p.number || '?'}</div>
@@ -2662,8 +2662,8 @@ function renderSquadView() {
 
   const sections = [
     { key: 'Titular', cssClass: 'sec-titular', label: 'Titulares' },
-    { key: 'A',       cssClass: 'sec-a',       label: 'Suplentes A' },
-    { key: 'B',       cssClass: 'sec-b',       label: 'Suplentes B' },
+    { key: 'A',       cssClass: 'sec-a',       label: 'Suplentes' },
+    { key: 'B',       cssClass: 'sec-b',       label: 'Reservas' },
   ];
 
   container.innerHTML = sections.map(s => {
